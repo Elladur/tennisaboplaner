@@ -98,10 +98,7 @@ class Schedule:
         sheet = excel.create_sheet("Matches Overview")  # type: ignore
         sheet.append(  # type: ignore
             ["Date"]
-            + [
-                Player.to_string(pm)
-                for pm in Player.get_all_possible_combinations(self.players)
-            ]
+            + [Player.to_string(pm) for pm in Player.get_all_possible_combinations(self.players)]
         )
         for r in sorted(self.rounds, key=lambda r: r.date):
             row = [str(r.date)]
@@ -174,10 +171,7 @@ class Schedule:
             matches.sort(key=lambda m: m.date)
             if len(matches) > 1:
                 pause_between_playing[p] = np.std(  # type: ignore
-                    [
-                        (matches[i + 1].date - matches[i].date).days
-                        for i in range(len(matches) - 1)
-                    ]
+                    [(matches[i + 1].date - matches[i].date).days for i in range(len(matches) - 1)]
                     + [  # add difference to first and last date
                         (matches[0].date - min_date).days,
                         (max_date - matches[-1].date).days,
@@ -196,13 +190,8 @@ class Schedule:
             matches = self.get_matches_of_players(encounter)
             matches.sort(key=lambda m: m.date)
             if len(matches) > 1:
-                pause_between_matches[
-                    Player.set_to_tuple(encounter)
-                ] = np.std(  # type: ignore
-                    [
-                        (matches[i + 1].date - matches[i].date).days
-                        for i in range(len(matches) - 1)
-                    ]
+                pause_between_matches[Player.set_to_tuple(encounter)] = np.std(  # type: ignore
+                    [(matches[i + 1].date - matches[i].date).days for i in range(len(matches) - 1)]
                     + [  # add difference to first and last date
                         (matches[0].date - min_date).days,
                         (max_date - matches[-1].date).days,

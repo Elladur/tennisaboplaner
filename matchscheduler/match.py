@@ -12,9 +12,7 @@ class Match:
     def __init__(self, players: set[Player], date_of_play: date):
         for player in players:
             if date_of_play in player.cannot_play:
-                raise NotValidMatch(
-                    f"Player {player.name} cannot play on {date_of_play}."
-                )
+                raise NotValidMatch(f"Player {player.name} cannot play on {date_of_play}.")
         # only two players per match
         if len(set(players)) != 2:
             raise NotValidMatch("A match must have two players.")

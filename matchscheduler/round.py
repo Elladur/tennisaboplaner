@@ -40,9 +40,7 @@ class Round:
             new_match = Match(players, self.matches[match_index].date)
             self.matches[match_index] = new_match
         except NotValidMatch as exc:
-            raise NotValidSwap(
-                "Swap is not valid, because Match is not valid."
-            ) from exc
+            raise NotValidSwap("Swap is not valid, because Match is not valid.") from exc
         if not self.is_valid():
             self.matches[match_index] = current_match
             raise NotValidSwap("Swap is not valid.")
@@ -65,9 +63,7 @@ class Round:
             self.matches[match_index1] = new_match1
             self.matches[match_index2] = new_match2
         except NotValidMatch as exc:
-            raise NotValidSwap(
-                "Swap is not valid, because Match is not valid."
-            ) from exc
+            raise NotValidSwap("Swap is not valid, because Match is not valid.") from exc
         if not self.is_valid():
             self.matches[match_index1] = current_match1
             self.matches[match_index2] = current_match2
@@ -97,15 +93,11 @@ class RoundFactory:
     """A factory for generating rounds."""
 
     @staticmethod
-    def generate_valid_round(
-        players: set[Player], date_of_play: date, num_courts: int
-    ) -> Round:
+    def generate_valid_round(players: set[Player], date_of_play: date, num_courts: int) -> Round:
         """Generate a valid round for the given players and date."""
         matches: list[Match] = []
         for i in range(num_courts):
-            for match in MatchFactory.generate_valid_new_match(
-                players, date_of_play, matches
-            ):
+            for match in MatchFactory.generate_valid_new_match(players, date_of_play, matches):
                 new_proposed_round = Round(matches + [match], date_of_play, i + 1)
                 if new_proposed_round.is_valid():
                     matches.append(match)

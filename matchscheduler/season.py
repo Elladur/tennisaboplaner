@@ -48,9 +48,7 @@ class Season:
         time_end = time.fromisoformat(data["calendar"]["time_end"])
         number_courts = data["abo"]["number_courts"]
         calendar_title = data["calendar"]["title"]
-        return cls(
-            players, start, end, number_courts, time_start, time_end, calendar_title
-        )
+        return cls(players, start, end, number_courts, time_start, time_end, calendar_title)
 
     def generate_schedule(self) -> None:
         """Generate a schedule for this season."""
@@ -117,11 +115,7 @@ class Season:
         if self.schedule is None:
             raise NotValidSchedule("No schedule generated yet.")
 
-        indizes = [
-            (i, j)
-            for i in range(len(self.schedule.rounds))
-            for j in range(self.num_courts)
-        ]
+        indizes = [(i, j) for i in range(len(self.schedule.rounds)) for j in range(self.num_courts)]
 
         # shuffle index to have a random factor
         # (thus start if schedule is not to optimized)
@@ -147,9 +141,7 @@ class Season:
                 continue
 
             try:
-                self.schedule.swap_matches(
-                    round_index1, match_index1, round_index2, match_index2
-                )
+                self.schedule.swap_matches(round_index1, match_index1, round_index2, match_index2)
             except NotValidSwap:
                 continue
             new_score = self.schedule.get_score()
@@ -158,9 +150,7 @@ class Season:
                 current_score = new_score
             else:
                 # swap back to original matches
-                self.schedule.swap_matches(
-                    round_index1, match_index1, round_index2, match_index2
-                )
+                self.schedule.swap_matches(round_index1, match_index1, round_index2, match_index2)
         return swaps
 
     def optimize_schedule(self) -> None:
@@ -193,6 +183,4 @@ class Season:
         """Export this season to an Excel file."""
         if self.schedule is None:
             raise NotValidSchedule("No schedule generated yet.")
-        self.schedule.export(
-            folderpath, self.calendar_title, self.time_start, self.time_end
-        )
+        self.schedule.export(folderpath, self.calendar_title, self.time_start, self.time_end)

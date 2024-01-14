@@ -21,9 +21,7 @@ class Player:
         return cls(name, cannot_play)
 
     @classmethod
-    def get_all_possible_combinations(
-        cls, players: set["Player"]
-    ) -> list[set["Player"]]:
+    def get_all_possible_combinations(cls, players: set["Player"]) -> list[set["Player"]]:
         """Get all possible combinations of players."""
         return [set(i) for i in combinations(players, 2)]
 
