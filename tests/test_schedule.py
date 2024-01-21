@@ -1,6 +1,6 @@
 # write unit tests for the schedule class of matchscheduler/schedule.py
 
-from matchscheduler.schedule import Schedule, ScheduleFactory, NotValidSwap
+from matchscheduler.schedule import Schedule, ScheduleFactory, NotValidSwapError
 
 from datetime import time
 from matchscheduler.player import Player
@@ -137,7 +137,7 @@ def test_swap_matches_raises_exception_if_swap_is_not_valid(players):
     round2 = Round([match3, match4], date.fromisoformat("2021-02-08"), 2)
     s = Schedule([round1, round2], players)
 
-    with pytest.raises(NotValidSwap):
+    with pytest.raises(NotValidSwapError):
         s.swap_matches(0, 0, 1, 1)
     assert s.rounds[0] == round1
     assert s.rounds[1] == round2

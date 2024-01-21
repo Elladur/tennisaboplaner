@@ -10,4 +10,4 @@ if __name__ == "__main__":
         s.generate_schedule()
         s.optimize_schedule()
         s.export_season(os.getcwd() + "/output/")
-        s.schedule.get_score()
+        print(f"Current Schedule score is = {s.schedule.get_score()}")

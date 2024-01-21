@@ -4,8 +4,8 @@ from datetime import date, datetime, time, timedelta
 from itertools import combinations
 
 from .player import Player
-from .round import NotValidSwap
-from .schedule import NotValidSchedule, Schedule, ScheduleFactory
+from .round import NotValidSwapError
+from .schedule import NotValidScheduleError, Schedule, ScheduleFactory
 
 
 class Season:
@@ -59,21 +59,21 @@ class Season:
     def optimize_schedule_by_swapping_players(self, swaps: int) -> int:
         """Optimize the schedule by swapping players."""
         if self.schedule is None:
-            raise NotValidSchedule("No schedule generated yet.")
+            raise NotValidScheduleError("No schedule generated yet.")
 
         current_score = self.schedule.get_score()
         # switch with all possible players
         for r in self.schedule.rounds:
             print(f"{datetime.now()}: Starting new round {r.date} ...", end="\r")
             for match_index, match in enumerate(r.matches):
-                # todo: this could be optimized if we only take players
-                # that are not playing in other matches as well
                 current_players = match.players
-                for possible_pair in Player.get_all_possible_combinations(self.players):
+                for possible_pair in Player.get_all_possible_combinations(
+                    self.players.difference(r.get_players()).union(match.players)
+                ):
                     if current_players != possible_pair:
                         try:
                             r.swap_players(match_index, possible_pair)
-                        except NotValidSwap:
+                        except NotValidSwapError:
                             continue
                         new_score = self.schedule.get_score()
                         if new_score < current_score:
@@ -96,7 +96,7 @@ class Season:
                     for player2 in match2.players:
                         try:
                             r.swap_players_of_existing_matches(i, j, {player1, player2})
-                        except NotValidSwap:
+                        except NotValidSwapError:
                             continue
                         new_score = self.schedule.get_score()
                         if new_score < current_score:
@@ -109,11 +109,11 @@ class Season:
         return swaps
 
     def optimize_schedule_by_swapping_matches(self, swaps: int) -> int:
-        # todo: check if we need  this anymore if we swap also player
-        # between existing matches in a round
         """Optimize the schedule by swapping matches."""
+        # cant be removed even if we swap players between existing matches
+        # it gives an additional random factor to the algorithmus
         if self.schedule is None:
-            raise NotValidSchedule("No schedule generated yet.")
+            raise NotValidScheduleError("No schedule generated yet.")
 
         indizes = [(i, j) for i in range(len(self.schedule.rounds)) for j in range(self.num_courts)]
 
@@ -142,7 +142,7 @@ class Season:
 
             try:
                 self.schedule.swap_matches(round_index1, match_index1, round_index2, match_index2)
-            except NotValidSwap:
+            except NotValidSwapError:
                 continue
             new_score = self.schedule.get_score()
             if new_score < current_score:
@@ -182,5 +182,5 @@ class Season:
     def export_season(self, folderpath: str) -> None:
         """Export this season to an Excel file."""
         if self.schedule is None:
-            raise NotValidSchedule("No schedule generated yet.")
+            raise NotValidScheduleError("No schedule generated yet.")
         self.schedule.export(folderpath, self.calendar_title, self.time_start, self.time_end)

@@ -12,10 +12,10 @@ class Match:
     def __init__(self, players: set[Player], date_of_play: date):
         for player in players:
             if date_of_play in player.cannot_play:
-                raise NotValidMatch(f"Player {player.name} cannot play on {date_of_play}.")
+                raise NotValidMatchError(f"Player {player.name} cannot play on {date_of_play}.")
         # only two players per match
         if len(set(players)) != 2:
-            raise NotValidMatch("A match must have two players.")
+            raise NotValidMatchError("A match must have two players.")
 
         self.players = players
         self.date = date_of_play
@@ -25,7 +25,7 @@ class Match:
         return f"{names[0]} vs {names[1]}"
 
 
-class NotValidMatch(Exception):
+class NotValidMatchError(Exception):
     """Raised when a match is not valid."""
 
 
@@ -46,5 +46,5 @@ class MatchFactory:
                 if m in matches:
                     continue
                 yield m
-            except NotValidMatch:
+            except NotValidMatchError:
                 continue

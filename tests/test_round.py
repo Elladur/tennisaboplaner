@@ -2,7 +2,7 @@ import pytest
 from datetime import date
 from matchscheduler.match import Match
 from matchscheduler.player import Player
-from matchscheduler.round import Round, RoundFactory, NotValidSwap
+from matchscheduler.round import Round, RoundFactory, NotValidSwapError
 
 
 @pytest.mark.parametrize(
@@ -156,7 +156,7 @@ def test_swap_players_raises_exception_if_match_is_not_valid():
         Player("Alice", ["2021-01-07", "2021-01-08"]),
     ]
     r = RoundFactory.generate_valid_round(players, date.fromisoformat("2021-01-03"), 1)
-    with pytest.raises(NotValidSwap, match="Match is not valid."):
+    with pytest.raises(NotValidSwapError, match="Match is not valid."):
         r.swap_players(
             0,
             {
@@ -190,7 +190,7 @@ def test_swap_players_raises_exception_if_round_is_not_valid():
         2,
     )
 
-    with pytest.raises(NotValidSwap, match="Swap is not valid."):
+    with pytest.raises(NotValidSwapError, match="Swap is not valid."):
         r.swap_players(
             0,
             {players[0], players[2]},  # john vs bob
@@ -255,7 +255,7 @@ def test_swap_players_of_existing_matches_returns_error_if_players_are_in_same_m
         2,
     )
 
-    with pytest.raises(NotValidSwap, match="Swap is not valid."):
+    with pytest.raises(NotValidSwapError, match="Swap is not valid."):
         r.swap_players_of_existing_matches(
             0, 1, {players[0], players[1]}
         )  # john and jane
@@ -286,7 +286,7 @@ def test_swap_players_of_existing_match_retunrs_error_if_players_are_not_already
         2,
     )
 
-    with pytest.raises(NotValidSwap, match="Swap is not valid."):
+    with pytest.raises(NotValidSwapError, match="Swap is not valid."):
         r.swap_players_of_existing_matches(0, 1, {players[0], players[4]})
 
 
@@ -316,3 +316,34 @@ def test_swap_players_of_existing_matches_returns_error_if_index_of_matches_is_o
 
     with pytest.raises(IndexError):
         r.swap_players_of_existing_matches(0, 2, {players[0], players[4]})
+
+
+
+@pytest.mark.parametrize(
+    "matches, round_date, num_matches, expected_result",
+    [
+        (
+            [
+                Match(
+                    (Player("John", ["2021-01-01"]), Player("Jane", ["2021-01-02"])),
+                    date.fromisoformat("2021-01-03"),
+                ),
+                Match(
+                    (Player("Bob", ["2021-01-04"]), Player("Alice", ["2021-01-05"])),
+                    date.fromisoformat("2021-01-06"),
+                ),
+            ],
+            date.fromisoformat("2021-01-07"),
+            2,
+            {
+                Player("John", ["2021-01-01"]), Player("Jane", ["2021-01-02"]), 
+                Player("Bob", ["2021-01-04"]), Player("Alice", ["2021-01-05"])
+            }
+        )
+    ],
+)
+def test_get_players(matches, round_date, num_matches, expected_result):
+    r = Round(matches, round_date, num_matches)
+
+    result = r.get_players()
+    assert result == expected_result

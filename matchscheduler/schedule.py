@@ -10,7 +10,7 @@ from openpyxl import Workbook
 
 from .match import Match
 from .player import Player
-from .round import NotValidRound, NotValidSwap, Round, RoundFactory
+from .round import NotValidRoundError, NotValidSwapError, Round, RoundFactory
 
 
 class Schedule:
@@ -50,14 +50,14 @@ class Schedule:
         try:
             round1.swap_players(match_index1, match2.players)
             round2.swap_players(match_index2, match1.players)
-        except NotValidSwap as exc:
+        except NotValidSwapError as exc:
             # revert swap
             round1.swap_players(match_index1, match1.players)
             round2.swap_players(match_index2, match2.players)
             # reraise error
             raise exc
         if not self.is_valid():
-            raise NotValidSchedule("Swap is not valid.")
+            raise NotValidScheduleError("Swap is not valid.")
 
     # export schedule into a excel file with each round as a row
     # consisting of the date in the first column and in every next column a match
@@ -204,7 +204,7 @@ class Schedule:
         return np.sum(list(pause_between_matches.values()))  # type: ignore
 
 
-class NotValidSchedule(Exception):
+class NotValidScheduleError(Exception):
     """Raised when a schedule is not valid."""
 
 
@@ -220,10 +220,10 @@ class ScheduleFactory:
         for d in dates:
             try:
                 rounds.append(RoundFactory.generate_valid_round(players, d, num_courts))
-            except NotValidRound as exc:
-                raise NotValidSchedule("Could not generate a valid schedule.") from exc
+            except NotValidRoundError as exc:
+                raise NotValidScheduleError("Could not generate a valid schedule.") from exc
 
         s = Schedule(rounds, players)
         if s.is_valid():
             return s
-        raise NotValidSchedule("Could not generate a valid schedule.")
+        raise NotValidScheduleError("Could not generate a valid schedule.")

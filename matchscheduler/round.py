@@ -1,7 +1,7 @@
 """A round of a season consisting of a list of matches."""
 from datetime import date
 
-from .match import Match, MatchFactory, NotValidMatch
+from .match import Match, MatchFactory, NotValidMatchError
 from .player import Player
 
 
@@ -39,11 +39,11 @@ class Round:
         try:
             new_match = Match(players, self.matches[match_index].date)
             self.matches[match_index] = new_match
-        except NotValidMatch as exc:
-            raise NotValidSwap("Swap is not valid, because Match is not valid.") from exc
+        except NotValidMatchError as exc:
+            raise NotValidSwapError("Swap is not valid, because Match is not valid.") from exc
         if not self.is_valid():
             self.matches[match_index] = current_match
-            raise NotValidSwap("Swap is not valid.")
+            raise NotValidSwapError("Swap is not valid.")
 
     def swap_players_of_existing_matches(
         self, match_index1: int, match_index2: int, players_to_swap: set[Player]
@@ -62,12 +62,12 @@ class Round:
             )
             self.matches[match_index1] = new_match1
             self.matches[match_index2] = new_match2
-        except NotValidMatch as exc:
-            raise NotValidSwap("Swap is not valid, because Match is not valid.") from exc
+        except NotValidMatchError as exc:
+            raise NotValidSwapError("Swap is not valid, because Match is not valid.") from exc
         if not self.is_valid():
             self.matches[match_index1] = current_match1
             self.matches[match_index2] = current_match2
-            raise NotValidSwap("Swap is not valid.")
+            raise NotValidSwapError("Swap is not valid.")
 
     def export_match_string(self) -> str:
         """Export the matches of this round as a string."""
@@ -75,17 +75,15 @@ class Round:
 
     def get_players(self) -> set[Player]:
         """Get the players in this round."""
-        players: set[Player] = set()
-        for match in self.matches:
-            players.update(match.players)
+        players: set[Player] = {p for m in self.matches for p in m.players}
         return players
 
 
-class NotValidRound(Exception):
+class NotValidRoundError(Exception):
     """Raised when a round is not valid."""
 
 
-class NotValidSwap(Exception):
+class NotValidSwapError(Exception):
     """Raised when a swap is not valid."""
 
 
@@ -105,4 +103,4 @@ class RoundFactory:
         r = Round(matches, date_of_play, num_courts)
         if r.is_valid():
             return r
-        raise NotValidRound("Could not generate a valid round.")
+        raise NotValidRoundError("Could not generate a valid round.")
