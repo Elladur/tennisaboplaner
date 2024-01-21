@@ -11,12 +11,12 @@ import tempfile
 
 @pytest.fixture
 def players():
-    return [
+    return {
         Player("John", ["2021-01-01"]),
         Player("Jane", ["2021-01-02"]),
         Player("Bob", ["2021-01-03"]),
         Player("Alice", ["2021-01-04"]),
-    ]
+    }
 
 
 def test_init(players):
