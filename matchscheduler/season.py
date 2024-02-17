@@ -1,6 +1,7 @@
 """A season consisting of multiple rounds by a given start and end date."""
+import logging
 import random
-from datetime import date, datetime, time, timedelta
+from datetime import date, time, timedelta
 from itertools import combinations
 
 from .player import Player
@@ -37,6 +38,7 @@ class Season:
             d += timedelta(days=7)
 
         self.schedule: Schedule | None = None
+        self.logger = logging.getLogger(__name__)
 
     @classmethod
     def from_dict(cls, data: dict) -> "Season":
@@ -64,7 +66,8 @@ class Season:
         current_score = self.schedule.get_score()
         # switch with all possible players
         for r in self.schedule.rounds:
-            print(f"{datetime.now()}: Starting new round {r.date} ...", end="\r")
+            self.logger.debug(f"Switching all players: Starting new round {r.date}")
+
             for match_index, match in enumerate(r.matches):
                 current_players = match.players
                 for possible_pair in Player.get_all_possible_combinations(
@@ -87,7 +90,7 @@ class Season:
         current_score = self.schedule.get_score()
         # switch players between matches of a round
         for r in self.schedule.rounds:
-            print(f"{datetime.now()}: Starting new round {r.date} ...", end="\r")
+            self.logger.debug(f"Switching players inside round: Starting new round {r.date}")
             # get all combinations of match indexes
             for i, j in combinations(range(len(r.matches)), 2):
                 match1 = r.matches[i]
@@ -128,11 +131,10 @@ class Season:
             round_index2,
             match_index2,
         ) in index_combination:
-            print(
-                f"{datetime.now()}: try swapping Round {round_index1} "
+            self.logger.debug(
+                f"try swapping Round {round_index1} "
                 + f"Match {match_index1} with Round {round_index2} "
-                + f"Match {match_index2} ...",
-                end="\r",
+                + f"Match {match_index2}"
             )
             if (
                 self.schedule.rounds[round_index1].matches[match_index1].players
@@ -160,23 +162,23 @@ class Season:
 
         swaps = 0
         while True:
-            print(f"{datetime.now()}: Starting new round of optimizing ...")
+            self.logger.info("Starting new round of optimizing ...")
 
-            print(f"{datetime.now()}: Start swapping players ...")
+            self.logger.info("Start swapping players ...")
             swaps += self.optimize_schedule_by_swapping_players(swaps)
 
-            print(f"{datetime.now()}: Start swapping matches ...")
+            self.logger.info("Start swapping matches ...")
             swaps += self.optimize_schedule_by_swapping_matches(swaps)
 
             if swaps > 0:
-                print(
-                    f"{datetime.now()}: Swapped {swaps} times. "
+                self.logger.info(
+                    f"Swapped {swaps} times. "
                     + "The current score is: "
                     + f"{self.schedule.get_score()}."  # type: ignore
                 )
                 swaps = 0
             else:
-                print(f"{datetime.now()}: No more swaps feasible.")
+                self.logger.info("No more swaps feasible.")
                 break
 
     def export_season(self, folderpath: str) -> None:
