@@ -1,4 +1,5 @@
 """A round of a season consisting of a list of matches."""
+
 from datetime import date
 
 from .match import Match, MatchFactory, NotValidMatchError

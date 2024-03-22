@@ -1,4 +1,5 @@
 """Match class and factory for generating valid matches."""
+
 from datetime import date
 from itertools import combinations
 from typing import Generator

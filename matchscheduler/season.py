@@ -1,4 +1,5 @@
 """A season consisting of multiple rounds by a given start and end date."""
+
 import logging
 import random
 from datetime import date, time, timedelta
