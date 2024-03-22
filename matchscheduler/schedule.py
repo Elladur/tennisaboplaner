@@ -1,7 +1,6 @@
 """a schedule class consisting of a list of rounds
 a schedule is valid if all rounds are valid"""
 
-
 from datetime import date, datetime, time
 
 import numpy as np

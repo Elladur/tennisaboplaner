@@ -1,4 +1,5 @@
 """Player class for the match scheduler."""
+
 from datetime import date
 from itertools import combinations
 

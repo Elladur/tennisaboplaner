@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "matchscheduler"
+version = "0.1.0"
+description = "Tennisaboplaner is a script to schedule matches over a season. It's purpose is to give a schedule, if you are group of people that meet weekly for a tennis match and have only a number of limited courts, for instance indoor / in the winter season."
+authors = ["Elladur <mail@patrickreiner.at>"]
+readme = "README.md"
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^1.26.4"
+icalendar = "^5.0.12"
+openpyxl = "^3.1.2"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.1.0"
+ruff = "^0.3.4"
+pytest = "^8.1.1"
+pytest-mock = "^3.14.0"
+pytest-cov = "^4.1.0"
+mypy = "^1.9.0"
+types-openpyxl = "^3.1.0.20240311"
+tox = "^4.14.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
