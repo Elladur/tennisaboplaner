@@ -1,11 +1,11 @@
 from datetime import date
-from matchscheduler.player import Player
+
 import pytest
 
+from matchscheduler.player import Player
 
-@pytest.mark.parametrize(
-    "name, date_input", [("John", "2021-01-01"), ("Jane", "2021-01-02")]
-)
+
+@pytest.mark.parametrize("name, date_input", [("John", "2021-01-01"), ("Jane", "2021-01-02")])
 def test_player(name, date_input):
     player = Player(name, [date_input])
     assert player.name == name
@@ -22,9 +22,7 @@ def test_player(name, date_input):
 def test_from_dict(dict_player):
     player = Player.from_dict(dict_player)
     assert player.name == dict_player["name"]
-    assert player.cannot_play == [
-        date.fromisoformat(i) for i in dict_player["cannot_play"]
-    ]
+    assert player.cannot_play == [date.fromisoformat(i) for i in dict_player["cannot_play"]]
 
 
 def test_set_to_tuple_works():
