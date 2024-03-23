@@ -1,12 +1,13 @@
 # write unit tests for the season class of matchscheduler/season.py
 
-from matchscheduler.season import Season
-from matchscheduler.player import Player
-import pytest
-from datetime import date, timedelta, time
-from matchscheduler.schedule import ScheduleFactory, Schedule
-from pytest_mock import mocker
 import tempfile
+from datetime import date, time, timedelta
+
+import pytest
+
+from matchscheduler.player import Player
+from matchscheduler.schedule import Schedule
+from matchscheduler.season import Season
 
 
 @pytest.fixture
@@ -142,9 +143,7 @@ def test_export_season_calls_schedule_export(players, mocker):
     with tempfile.TemporaryDirectory() as temp_dir:
         s.export_season(temp_dir + "/")
 
-    m.export.assert_called_once_with(
-        temp_dir + "/", "Tennisabo", time(18, 0), time(20, 0)
-    )
+    m.export.assert_called_once_with(temp_dir + "/", "Tennisabo", time(18, 0), time(20, 0))
 
 
 # region integration tests
@@ -161,9 +160,7 @@ def test_export_season_calls_schedule_export(players, mocker):
         (date.fromisoformat("2022-01-01"), 8, 1),
     ],
 )
-def test_after_optimization_every_player_plays_same_amount(
-    players, start, rounds, num_courts
-):
+def test_after_optimization_every_player_plays_same_amount(players, start, rounds, num_courts):
     end = start + timedelta(weeks=rounds - 1)
     s = Season(players, start, end, num_courts, time(18, 0), time(20, 0))
     s.generate_schedule()

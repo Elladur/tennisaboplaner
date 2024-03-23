@@ -1,17 +1,16 @@
 # write unit tests for the schedule class of matchscheduler/schedule.py
 
-from matchscheduler.schedule import Schedule, ScheduleFactory, NotValidSwapError
-
-from datetime import time
-from matchscheduler.player import Player
-from matchscheduler.round import Round
-from matchscheduler.match import Match
-import pytest
-from datetime import date
-from matchscheduler.round import RoundFactory
-from pytest_mock import mocker
-import numpy as np
 import tempfile
+from datetime import date, time
+
+import numpy as np
+import pytest
+
+from matchscheduler.match import Match
+from matchscheduler.player import Player
+from matchscheduler.round import Round, RoundFactory
+from matchscheduler.schedule import (NotValidSwapError, Schedule,
+                                     ScheduleFactory)
 
 
 @pytest.fixture
@@ -67,9 +66,7 @@ def test_get_matches(rounds, players):
 
 def test_get_matches_of_player(rounds, players):
     s = Schedule(rounds, players)
-    assert s.get_matches_of_player(
-        next(filter(lambda x: x.name == "John", players))
-    ) == [
+    assert s.get_matches_of_player(next(filter(lambda x: x.name == "John", players))) == [
         m
         for r in rounds
         for m in r.matches
@@ -77,9 +74,7 @@ def test_get_matches_of_player(rounds, players):
     ]
 
 
-def test_get_matches_of_player_returns_empty_list_if_player_is_not_in_schedule(
-    rounds, players
-):
+def test_get_matches_of_player_returns_empty_list_if_player_is_not_in_schedule(rounds, players):
     s = Schedule(rounds, players)
     assert s.get_matches_of_player(Player("Not in schedule", ["2021-01-01"])) == []
 
@@ -100,9 +95,7 @@ def test_get_matches_of_players(rounds, players):
     ]
 
 
-def test_get_matches_of_players_returns_empty_list_if_players_are_not_in_schedule(
-    rounds, players
-):
+def test_get_matches_of_players_returns_empty_list_if_players_are_not_in_schedule(rounds, players):
     s = Schedule(rounds, players)
     assert (
         s.get_matches_of_players(

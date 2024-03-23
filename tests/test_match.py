@@ -1,10 +1,12 @@
 # write unit test for match.py
 
 from datetime import date
+from itertools import combinations
+
+import pytest
+
 from matchscheduler.match import Match, MatchFactory
 from matchscheduler.player import Player
-import pytest
-from itertools import combinations
 
 
 @pytest.mark.parametrize(

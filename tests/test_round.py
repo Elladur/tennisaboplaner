@@ -1,8 +1,10 @@
-import pytest
 from datetime import date
+
+import pytest
+
 from matchscheduler.match import Match
 from matchscheduler.player import Player
-from matchscheduler.round import Round, RoundFactory, NotValidSwapError
+from matchscheduler.round import NotValidSwapError, Round, RoundFactory
 
 
 @pytest.mark.parametrize(
@@ -256,9 +258,7 @@ def test_swap_players_of_existing_matches_returns_error_if_players_are_in_same_m
     )
 
     with pytest.raises(NotValidSwapError, match="Swap is not valid."):
-        r.swap_players_of_existing_matches(
-            0, 1, {players[0], players[1]}
-        )  # john and jane
+        r.swap_players_of_existing_matches(0, 1, {players[0], players[1]})  # john and jane
 
 
 def test_swap_players_of_existing_match_retunrs_error_if_players_are_not_already_playing():
@@ -318,7 +318,6 @@ def test_swap_players_of_existing_matches_returns_error_if_index_of_matches_is_o
         r.swap_players_of_existing_matches(0, 2, {players[0], players[4]})
 
 
-
 @pytest.mark.parametrize(
     "matches, round_date, num_matches, expected_result",
     [
@@ -336,9 +335,11 @@ def test_swap_players_of_existing_matches_returns_error_if_index_of_matches_is_o
             date.fromisoformat("2021-01-07"),
             2,
             {
-                Player("John", ["2021-01-01"]), Player("Jane", ["2021-01-02"]), 
-                Player("Bob", ["2021-01-04"]), Player("Alice", ["2021-01-05"])
-            }
+                Player("John", ["2021-01-01"]),
+                Player("Jane", ["2021-01-02"]),
+                Player("Bob", ["2021-01-04"]),
+                Player("Alice", ["2021-01-05"]),
+            },
         )
     ],
 )

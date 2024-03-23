@@ -1,8 +1,9 @@
-from matchscheduler.season import Season
 import json
-import os
 import logging
 import logging.config
+import os
+
+from matchscheduler.season import Season
 
 if __name__ == "__main__":
     logging.config.fileConfig("log.ini")
