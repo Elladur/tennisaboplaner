@@ -1,0 +1,43 @@
+{
+    "calendar": {
+        "title": "Tennisabo",
+        "time_start": "19:00",
+        "time_end": "21:00"
+    },
+    "abo": {
+        "start": "2022-09-01",
+        "end": "2023-05-01",
+        "number_courts": 2
+    },
+    "players": [
+        {
+            "name": "player1",
+            "cannot_play": [
+                "2022-09-01"
+            ]
+        },
+        {
+            "name": "player2",
+            "cannot_play": [
+                "2022-09-08",
+                "2022-09-15"
+            ]
+        },
+        {
+            "name": "player3",
+            "cannot_play": [
+                "2022-09-22"
+            ]
+        },
+        {
+            "name": "player4",
+            "cannot_play": [
+                "2022-09-29"
+            ]
+        },
+        {
+            "name": "player5",
+            "cannot_play": []
+        }
+    ]
+}
