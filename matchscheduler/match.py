@@ -21,6 +21,16 @@ class Match:
         self.players = players
         self.date = date_of_play
 
+    def to_dict(self) -> dict:
+        return {"players": [p.to_dict() for p in self.players], "date": str(self.date)}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Match":
+        players = set()
+        for x in data["players"]:
+            players.add(Player.from_dict(x))
+        return cls(players, date.fromisoformat(data["date"]))
+
     def __str__(self) -> str:
         names = sorted([p.name for p in self.players])
         return f"{names[0]} vs {names[1]}"

@@ -14,6 +14,9 @@ class Player:
         self.name = name
         self.cannot_play = [date.fromisoformat(i) for i in cannot_play]
 
+    def to_dict(self) -> dict:
+        return {"name": self.name, "cannot_play": [str(d) for d in self.cannot_play]}
+
     @classmethod
     def from_dict(cls, data: dict) -> "Player":
         """Create a Player from a dictionary."""

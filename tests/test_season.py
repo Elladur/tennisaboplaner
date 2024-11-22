@@ -46,7 +46,7 @@ def test_init(players):
     assert s.schedule is None
 
 
-def test_from_dict():
+def test_create_from_settings():
     data = {
         "players": [
             {
@@ -77,7 +77,7 @@ def test_from_dict():
             "title": "Tennisabo",
         },
     }
-    s = Season.from_dict(data)
+    s = Season.create_from_settings(data)
     assert s.players == {
         Player("John", ["2021-01-01"]),
         Player("Jane", ["2021-01-02"]),

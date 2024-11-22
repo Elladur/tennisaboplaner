@@ -14,6 +14,17 @@ class Round:
         self.num_matches = num_matches
         self.date = date_of_round
 
+    def to_dict(self) -> dict:
+        return {"matches": [m.to_dict() for m in self.matches], "date": str(self.date)}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Round":
+        matches = []
+        for x in data["matches"]:
+            matches.append(Match.from_dict(x))
+        date_of_round = date.fromisoformat(data["date"])
+        return cls(matches, date_of_round, len(matches))
+
     def is_valid(self) -> bool:
         """Check if this round is valid."""
         if len(self.matches) != self.num_matches:

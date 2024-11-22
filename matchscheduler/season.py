@@ -41,8 +41,33 @@ class Season:
         self.schedule: Schedule | None = None
         self.logger = logging.getLogger(__name__)
 
+    def to_dict(self) -> dict:
+        return {
+            "players": [p.to_dict() for p in self.players],
+            "start": str(self.start),
+            "end": str(self.end),
+            "number_courts": self.num_courts,
+            "time_start": str(self.time_start),
+            "time_end": str(self.time_end),
+            "calendar_title": self.calendar_title,
+            "schedule": self.schedule.to_dict() if self.schedule is not None else "",
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> "Season":
+        players = {Player.from_dict(p) for p in data["players"]}
+        start = date.fromisoformat(data["start"])
+        end = date.fromisoformat(data["end"])
+        time_start = time.fromisoformat(data["time_start"])
+        time_end = time.fromisoformat(data["time_end"])
+        number_courts = data["number_courts"]
+        calendar_title = data["calendar_title"]
+        instance = cls(players, start, end, number_courts, time_start, time_end, calendar_title)
+        instance.schedule = Schedule.from_dict(data["schedule"])
+        return instance
+
+    @classmethod
+    def create_from_settings(cls, data: dict) -> "Season":
         """Create a Season from a dictionary."""
         players = {Player.from_dict(p) for p in data["players"]}
         start = date.fromisoformat(data["abo"]["start"])
