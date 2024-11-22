@@ -3,9 +3,12 @@ from pathlib import Path
 
 from matchscheduler.season import Season
 
+
 def test_optimize(request):
     base_path = Path(request.path).parent
-    with open(f"{base_path}/input/settings.json", "r", encoding="utf-8") as input, open(f"{base_path}/expected/test_optimize.json", "r", encoding="utf-8") as expected:
+    with open(f"{base_path}/input/settings.json", "r", encoding="utf-8") as input, open(
+        f"{base_path}/expected/test_optimize.json", "r", encoding="utf-8"
+    ) as expected:
         # load settings.json into data object
         data = json.load(input)
         s = Season.create_from_settings(data)
