@@ -1,7 +1,7 @@
 # write unit tests for the season class of matchscheduler/season.py
-
 import tempfile
 from datetime import date, time, timedelta
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -100,7 +100,7 @@ def test_from_dict():
     assert s.schedule is None
 
 
-def test_generate_schedule(players, mocker):
+def test_generate_schedule(players):
     start = date.fromisoformat("2021-01-01")
     end = date.fromisoformat("2021-01-31")
     number_courts = 2
@@ -113,18 +113,17 @@ def test_generate_schedule(players, mocker):
         time.fromisoformat("20:00"),
     )
 
-    # mock the ScheduleFactory.generate_valid_schedule method
-    m = mocker.patch("matchscheduler.season.ScheduleFactory.generate_valid_schedule")
     return_val = Schedule([], players)
-    m.return_value = return_val
+    with patch(
+        "matchscheduler.season.ScheduleFactory.generate_valid_schedule", return_value=return_val
+    ) as mock:
+        s.generate_schedule()
 
-    s.generate_schedule()
-
-    m.assert_called_once_with(players, s.dates, number_courts)
-    assert s.schedule == return_val
+        mock.assert_called_once_with(players, s.dates, number_courts)
+        assert s.schedule == return_val
 
 
-def test_export_season_calls_schedule_export(players, mocker):
+def test_export_season_calls_schedule_export(players):
     start = date.fromisoformat("2021-01-01")
     end = date.fromisoformat("2021-01-31")
     number_courts = 2
@@ -137,7 +136,7 @@ def test_export_season_calls_schedule_export(players, mocker):
         time.fromisoformat("20:00"),
     )
 
-    m = mocker.Mock()
+    m = Mock()
     s.schedule = m
 
     with tempfile.TemporaryDirectory() as temp_dir:
