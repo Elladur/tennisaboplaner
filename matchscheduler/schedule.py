@@ -19,6 +19,22 @@ class Schedule:
         self.rounds = rounds
         self.players = players
 
+    def to_dict(self) -> dict:
+        return {
+            "rounds": [r.to_dict() for r in self.rounds],
+            "players": [p.to_dict() for p in self.players],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Schedule":
+        rounds = []
+        players = set()
+        for x in data["rounds"]:
+            rounds.append(Round.from_dict(x))
+        for x in data["players"]:
+            players.add(Player.from_dict(x))
+        return cls(rounds, players)
+
     def is_valid(self) -> bool:
         """Check if this schedule is valid."""
         for r in self.rounds:
