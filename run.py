@@ -1,16 +1,19 @@
 import json
-from joblib import Parallel, delayed
 import logging
 import logging.config
 import os
-
 from pathlib import Path
-from matchscheduler.season import Season
+
+from joblib import Parallel, delayed
+
 from matchscheduler.optimizer import Optimizer
 from matchscheduler.printer import Printer
+from matchscheduler.season import Season
+
 
 def task(optimizer: Optimizer) -> float:
     return {"score": optimizer.optimize_schedule(), "season": optimizer.season}
+
 
 if __name__ == "__main__":
     logging.config.fileConfig("log.ini")

@@ -24,11 +24,14 @@ class Printer:
         sheet = excel.active
         sheet.title = "Schedule"  # type: ignore
         sheet.append(  # type: ignore
-            ["Date"]
-            + [f"Match {i}" for i in range(1, len(self.season.schedule.rounds[0].matches) + 1)]
+            ["Date"] + [f"Match {i+1}" for i in range(self.season.num_courts)]
         )
-        for r in sorted(self.season.schedule.rounds, key=lambda r: r.date):
-            sheet.append([r.date] + [str(m) for m in r.matches])  # type: ignore
+        for d in sorted(self.season.dates + self.season.excluded_dates):
+            if d in self.season.excluded_dates:
+                sheet.append([d])  # type: ignore
+            else:
+                r = next(filter(lambda x: x.date == d, self.season.schedule.rounds))
+                sheet.append([r.date] + [str(m) for m in r.matches])  # type: ignore
 
         # add an additional sheet to excel workbook with columns for each player
         # and their match partners

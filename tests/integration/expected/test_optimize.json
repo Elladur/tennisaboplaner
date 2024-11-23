@@ -35,6 +35,7 @@
     "number_courts": 2,
     "time_start": "19:00:00",
     "time_end": "21:00:00",
+    "excluded_dates": [],
     "calendar_title": "Tennisabo",
     "schedule": {
         "rounds": [

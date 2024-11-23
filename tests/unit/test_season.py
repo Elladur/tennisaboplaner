@@ -28,6 +28,7 @@ def test_init(players):
         number_courts,
         time.fromisoformat("18:00"),
         time.fromisoformat("20:00"),
+        [],
     )
     assert s.players == players
     assert s.start == start
@@ -66,6 +67,7 @@ def test_create_from_settings():
         "abo": {
             "start": "2021-01-01",
             "end": "2021-01-31",
+            "excluded_dates": [],
             "number_courts": 2,
         },
         "calendar": {
