@@ -36,6 +36,7 @@
     "time_start": "19:00:00",
     "time_end": "21:00:00",
     "excluded_dates": [],
+    "overall_cost": 1000,
     "calendar_title": "Tennisabo",
     "schedule": {
         "rounds": [

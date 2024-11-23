@@ -67,6 +67,7 @@ def test_create_from_settings():
         "abo": {
             "start": "2021-01-01",
             "end": "2021-01-31",
+            "overall_cost": 1000,
             "excluded_dates": [],
             "number_courts": 2,
         },

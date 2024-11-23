@@ -74,6 +74,21 @@ class Printer:
                 row.append(append_string)  # type: ignore
             sheet.append(row)  # type: ignore
 
+        sheet = excel.create_sheet("Costs")
+        sheet.append([""] + [str(p) for p in self.season.players])  # type: ignore
+        cost_per_match = self.season.overall_cost / len(self.season.schedule.get_matches()) / 2
+        sheet.append(  # type: ignore
+            ["Matches"]
+            + [len(self.season.schedule.get_matches_of_player(p)) for p in self.season.players]
+        )
+        sheet.append(  # type: ignore
+            ["Cost"]
+            + [
+                cost_per_match * len(self.season.schedule.get_matches_of_player(p))
+                for p in self.season.players
+            ]
+        )
+
         excel.save(folderpath / "schedule.xlsx")
 
         # create a calendar for each player with his matches
