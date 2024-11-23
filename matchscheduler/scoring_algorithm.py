@@ -19,17 +19,19 @@ class ScoringAlgorithm:
 
     def get_std_of_player_times_playing(self, schedule: Schedule) -> float:
         """Get the standard deviation of times playing for this schedule."""
-        times_playing: dict[Player, int] = {}
+        weighted_times_playing: dict[Player, float] = {}
         for p in schedule.players:
-            times_playing[p] = len(schedule.get_matches_of_player(p))
-        return np.std(list(times_playing.values()))  # type: ignore
+            weighted_times_playing[p] = len(schedule.get_matches_of_player(p)) / p.weight
+        return np.std(list(weighted_times_playing.values()))  # type: ignore
 
     def get_std_of_all_possible_matches(self, schedule: Schedule) -> float:
         """Get the standard deviation of all possible matches for this schedule."""
-        all_possible_matches: dict[tuple[Player, Player], int] = {}
+        all_possible_matches: dict[tuple[Player, Player], float] = {}
         for encounter in Player.get_all_possible_combinations(schedule.players):
-            all_possible_matches[Player.set_to_tuple(encounter)] = len(
-                schedule.get_matches_of_players(encounter)
+            p, q = encounter
+            combined_weight = p.weight * q.weight
+            all_possible_matches[Player.set_to_tuple(encounter)] = (
+                len(schedule.get_matches_of_players(encounter)) / combined_weight
             )
         return np.std(list(all_possible_matches.values()))  # type: ignore
 

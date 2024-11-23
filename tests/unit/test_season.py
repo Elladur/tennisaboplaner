@@ -50,18 +50,22 @@ def test_create_from_settings():
             {
                 "name": "John",
                 "cannot_play": ["2021-01-01"],
+                "weight": 1,
             },
             {
                 "name": "Jane",
                 "cannot_play": ["2021-01-02"],
+                "weight": 1,
             },
             {
                 "name": "Bob",
                 "cannot_play": ["2021-01-03"],
+                "weight": 1,
             },
             {
                 "name": "Alice",
                 "cannot_play": ["2021-01-04"],
+                "weight": 1,
             },
         ],
         "abo": {

@@ -19,30 +19,35 @@
             "name": "player1",
             "cannot_play": [
                 "2022-09-01"
-            ]
+            ],
+            "weight": 1
         },
         {
             "name": "player2",
             "cannot_play": [
                 "2022-09-08",
                 "2022-09-15"
-            ]
+            ],
+            "weight": 1
         },
         {
             "name": "player3",
             "cannot_play": [
                 "2022-09-22"
-            ]
+            ],
+            "weight": 1
         },
         {
             "name": "player4",
             "cannot_play": [
                 "2022-09-29"
-            ]
+            ],
+            "weight": 1
         },
         {
             "name": "player5",
-            "cannot_play": []
+            "cannot_play": [],
+            "weight": 1
         }
     ]
 }

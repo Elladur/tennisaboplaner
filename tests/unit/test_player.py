@@ -15,14 +15,15 @@ def test_player(name, date_input):
 @pytest.mark.parametrize(
     "dict_player",
     [
-        {"name": "John", "cannot_play": ["2021-01-01", "2021-01-02"]},
-        {"name": "Jane", "cannot_play": ["2021-01-02"]},
+        {"name": "John", "cannot_play": ["2021-01-01", "2021-01-02"], "weight": 1},
+        {"name": "Jane", "cannot_play": ["2021-01-02"], "weight": 0.4},
     ],
 )
 def test_from_dict(dict_player):
     player = Player.from_dict(dict_player)
     assert player.name == dict_player["name"]
     assert player.cannot_play == [date.fromisoformat(i) for i in dict_player["cannot_play"]]
+    assert player.weight == dict_player["weight"]
 
 
 def test_set_to_tuple_works():
