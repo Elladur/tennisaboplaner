@@ -22,7 +22,7 @@ if __name__ == "__main__":
         seasons = [Optimizer(Season.create_from_settings(data)) for x in range(num_jobs)]
         results = Parallel(n_jobs=num_jobs)(delayed(task)(s) for s in seasons)
         best_result = sorted(results, key=lambda x: x["score"])[0]
-        s = best_result["season"]
+        score, s = best_result["score"], best_result["season"]
         p = Printer(s)
         p.export(Path(os.getcwd() + "/output/"))
-        logger.info(f"Current Schedule score is = {best_result["score"]}")
+        logger.info(f"Current Schedule score is = {score}")

@@ -21,4 +21,4 @@ def test_optimize(request):
         end_time = time.time()
 
         elapsed_time = end_time - start_time
-        assert elapsed_time <= 13 # 9.483287572860718
+        assert elapsed_time <= 13  # 9.483287572860718

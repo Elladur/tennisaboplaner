@@ -6,8 +6,7 @@ import pytest
 from matchscheduler.match import Match
 from matchscheduler.player import Player
 from matchscheduler.round import Round, RoundFactory
-from matchscheduler.schedule import (NotValidSwapError, Schedule,
-                                     ScheduleFactory)
+from matchscheduler.schedule import NotValidSwapError, Schedule, ScheduleFactory
 
 
 @pytest.fixture
