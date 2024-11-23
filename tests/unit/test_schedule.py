@@ -1,7 +1,5 @@
 # write unit tests for the schedule class of matchscheduler/schedule.py
-import tempfile
-from datetime import date, time
-from unittest.mock import Mock, patch
+from datetime import date
 
 import pytest
 
@@ -135,34 +133,6 @@ def test_swap_matches_raises_exception_if_swap_is_not_valid(players):
     assert s.rounds[1] == round2
 
 
-# write a test for the export method and patch the excel file and check the content of the file
-def test_export(rounds, players):
-    with patch("matchscheduler.schedule.Workbook") as class_mock:
-        excel_mock = Mock()
-        class_mock.return_value = excel_mock
-
-        sheet_mock = Mock()
-        excel_mock.active = sheet_mock
-
-        s = Schedule(rounds, players)
-
-        with tempfile.TemporaryDirectory() as temp_dir:
-            print(f"Created temporary directory: {temp_dir}")
-            # Your code that uses the temporary directory goes here
-            s.export(temp_dir + "/", "calendar_title", time(10, 0), time(12, 0))
-
-            excel_mock.save.assert_called_once()
-            assert sheet_mock.append.call_count == len(rounds) + 1
-
-            # check that call arguments of sheet_mock.append are correct
-            args = sheet_mock.append.call_args_list
-            assert args[0][0][0] == ["Date"] + [
-                f"Match {i}" for i in range(1, len(rounds[0].matches) + 1)
-            ]
-            for i, r in enumerate(rounds):
-                assert args[i + 1][0][0] == [r.date] + [str(m) for m in r.matches]
-
-
 def test_generate_valid_schedule_yields_valid_scheduler(players):
     dates = [
         date.fromisoformat("2021-01-07"),
@@ -184,41 +154,3 @@ def test_generate_valid_schedule_raises_exception_if_it_cant_find_any(players):
     ]
     with pytest.raises(Exception):
         ScheduleFactory.generate_valid_schedule(players, dates, 5)
-
-
-def test_get_score_uses_submethods(players):
-    s = ScheduleFactory.generate_valid_schedule(
-        players,
-        [
-            date.fromisoformat("2021-01-07"),
-            date.fromisoformat("2021-01-14"),
-            date.fromisoformat("2021-01-21"),
-        ],
-        2,
-    )
-    with patch.object(s, "get_std_of_all_possible_matches", return_value=1) as mock1, patch.object(
-        s, "get_std_of_player_times_playing", return_value=1
-    ) as mock2, patch.object(
-        s, "get_std_of_pause_between_matches", return_value=1
-    ) as mock3, patch.object(
-        s, "get_std_of_pause_between_playing", return_value=1
-    ) as mock4:
-        s.get_score()
-        mock1.assert_called_once()
-        mock2.assert_called_once()
-        mock3.assert_called_once()
-        mock4.assert_called_once()
-
-
-def test_get_std_of_all_possible_matches(players):
-    s = ScheduleFactory.generate_valid_schedule(
-        players,
-        [
-            date.fromisoformat("2021-01-07"),
-            date.fromisoformat("2021-01-14"),
-            date.fromisoformat("2021-01-21"),
-        ],
-        2,
-    )
-    with patch.object(s, "get_matches_of_players", return_value=[x for x in range(10)]):
-        assert s.get_std_of_all_possible_matches() == 0

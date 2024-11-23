@@ -4,7 +4,7 @@ import logging
 from datetime import date, time, timedelta
 
 from .player import Player
-from .schedule import NotValidScheduleError, Schedule
+from .schedule import Schedule
 
 
 class Season:
@@ -74,9 +74,3 @@ class Season:
         number_courts = data["abo"]["number_courts"]
         calendar_title = data["calendar"]["title"]
         return cls(players, start, end, number_courts, time_start, time_end, calendar_title)
-
-    def export_season(self, folderpath: str) -> None:
-        """Export this season to an Excel file."""
-        if self.schedule is None:
-            raise NotValidScheduleError("No schedule generated yet.")
-        self.schedule.export(folderpath, self.calendar_title, self.time_start, self.time_end)
