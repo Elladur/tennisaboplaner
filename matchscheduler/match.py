@@ -51,9 +51,9 @@ class MatchFactory:
         # try random generations of players till we have a valid match
         # if we can't find a valid match, raise an exception
         # if we can find a valid match, return it
-        for p, pq in combinations(players, 2):
+        for p, q in combinations(players, 2):
             try:
-                m = Match({p, pq}, d)
+                m = Match({p, q}, d)
                 if m in matches:
                     continue
                 yield m
