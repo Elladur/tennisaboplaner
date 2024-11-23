@@ -15,8 +15,10 @@ def test_optimize(request):
         o = Optimizer(s)
 
         start_time = time.time()
-        o.optimize_schedule()
+        for _ in range(5):
+            o.optimize_schedule()
+            s.schedule = None
         end_time = time.time()
 
         elapsed_time = end_time - start_time
-        assert elapsed_time <= 4  # 2.4688916206359863
+        assert elapsed_time <= 13 # 9.483287572860718
