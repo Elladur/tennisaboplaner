@@ -8,6 +8,7 @@
         "start": "2022-09-01",
         "end": "2023-05-01",
         "excluded_dates": ["2022-09-22"],
+        "overall_cost": 1000,
         "number_courts": 2
     },
     "players": [
