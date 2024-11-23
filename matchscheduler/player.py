@@ -10,19 +10,25 @@ class Player:
     name: str
     cannot_play: list[date]
 
-    def __init__(self, name: str, cannot_play: list[str]):
+    def __init__(self, name: str, cannot_play: list[str], weight: float = 1):
         self.name = name
         self.cannot_play = [date.fromisoformat(i) for i in cannot_play]
+        self.weight = weight
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "cannot_play": [str(d) for d in self.cannot_play]}
+        return {
+            "name": self.name,
+            "cannot_play": [str(d) for d in self.cannot_play],
+            "weight": self.weight,
+        }
 
     @classmethod
     def from_dict(cls, data: dict) -> "Player":
         """Create a Player from a dictionary."""
         name = data["name"]
         cannot_play = data["cannot_play"]
-        return cls(name, cannot_play)
+        weight = data["weight"]
+        return cls(name, cannot_play, weight)
 
     @classmethod
     def get_all_possible_combinations(cls, players: set["Player"]) -> list[set["Player"]]:
