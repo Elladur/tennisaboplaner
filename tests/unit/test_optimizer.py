@@ -23,7 +23,7 @@ def test_after_optimization_every_player_playes_against_every_other_player_at_le
     start = date.fromisoformat("2022-01-01")
     end = start + timedelta(weeks=16 - 1)
     num_courts = 2
-    s = Season(players, start, end, num_courts, time(18, 0), time(20, 0))
+    s = Season(players, start, end, num_courts, time(18, 0), time(20, 0), [])
     o = Optimizer(s)
     o.optimize_schedule()
 
@@ -47,7 +47,7 @@ def test_after_optimization_every_player_playes_against_every_other_player_at_le
 )
 def test_after_optimization_every_player_plays_same_amount(players, start, rounds, num_courts):
     end = start + timedelta(weeks=rounds - 1)
-    s = Season(players, start, end, num_courts, time(18, 0), time(20, 0))
+    s = Season(players, start, end, num_courts, time(18, 0), time(20, 0), [])
     o = Optimizer(s)
     o.optimize_schedule()
 
