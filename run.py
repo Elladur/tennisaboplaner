@@ -1,18 +1,28 @@
 import json
+from joblib import Parallel, delayed
 import logging
 import logging.config
 import os
 
+from pathlib import Path
 from matchscheduler.season import Season
+from matchscheduler.optimizer import Optimizer
+from matchscheduler.printer import Printer
+
+def task(optimizer: Optimizer) -> float:
+    return {"score": optimizer.optimize_schedule(), "season": optimizer.season}
 
 if __name__ == "__main__":
     logging.config.fileConfig("log.ini")
     logger = logging.getLogger(__name__)
+    num_jobs = 10
     with open("settings.json", "r", encoding="utf-8") as f:
         # load settings.json into data object
         data = json.load(f)
-        s = Season.from_dict(data)
-        s.generate_schedule()
-        s.optimize_schedule()
-        s.export_season(os.getcwd() + "/output/")
-        logger.info(f"Current Schedule score is = {s.schedule.get_score()}")
+        seasons = [Optimizer(Season.create_from_settings(data)) for x in range(num_jobs)]
+        results = Parallel(n_jobs=num_jobs)(delayed(task)(s) for s in seasons)
+        best_result = sorted(results, key=lambda x: x["score"])[0]
+        score, s = best_result["score"], best_result["season"]
+        p = Printer(s)
+        p.export(Path(os.getcwd() + "/output/"))
+        logger.info(f"Current Schedule score is = {score}")

@@ -2,6 +2,7 @@ import json
 import time
 from pathlib import Path
 
+from matchscheduler.optimizer import Optimizer
 from matchscheduler.season import Season
 
 
@@ -11,11 +12,13 @@ def test_optimize(request):
         # load settings.json into data object
         data = json.load(input)
         s = Season.create_from_settings(data)
-        s.generate_schedule()
+        o = Optimizer(s)
 
         start_time = time.time()
-        s.optimize_schedule()
+        for _ in range(5):
+            o.optimize_schedule()
+            s.schedule = None
         end_time = time.time()
 
         elapsed_time = end_time - start_time
-        assert elapsed_time <= 4  # 2.4688916206359863
+        assert elapsed_time <= 13  # 9.483287572860718

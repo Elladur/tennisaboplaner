@@ -1,0 +1,1411 @@
+{
+    "players": [
+        {
+            "name": "player2",
+            "cannot_play": [
+                "2022-09-08",
+                "2022-09-15"
+            ]
+        },
+        {
+            "name": "player1",
+            "cannot_play": [
+                "2022-09-01"
+            ]
+        },
+        {
+            "name": "player5",
+            "cannot_play": []
+        },
+        {
+            "name": "player3",
+            "cannot_play": [
+                "2022-09-22"
+            ]
+        },
+        {
+            "name": "player4",
+            "cannot_play": [
+                "2022-09-29"
+            ]
+        }
+    ],
+    "start": "2022-09-01",
+    "end": "2023-05-01",
+    "number_courts": 2,
+    "time_start": "19:00:00",
+    "time_end": "21:00:00",
+    "calendar_title": "Tennisabo",
+    "schedule": {
+        "rounds": [
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-09-01"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2022-09-01"
+                    }
+                ],
+                "date": "2022-09-01"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-09-08"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2022-09-08"
+                    }
+                ],
+                "date": "2022-09-08"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-09-15"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-09-15"
+                    }
+                ],
+                "date": "2022-09-15"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-09-22"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-09-22"
+                    }
+                ],
+                "date": "2022-09-22"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-09-29"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2022-09-29"
+                    }
+                ],
+                "date": "2022-09-29"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-10-06"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            }
+                        ],
+                        "date": "2022-10-06"
+                    }
+                ],
+                "date": "2022-10-06"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-10-13"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2022-10-13"
+                    }
+                ],
+                "date": "2022-10-13"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-10-20"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-10-20"
+                    }
+                ],
+                "date": "2022-10-20"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-10-27"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            }
+                        ],
+                        "date": "2022-10-27"
+                    }
+                ],
+                "date": "2022-10-27"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-11-03"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2022-11-03"
+                    }
+                ],
+                "date": "2022-11-03"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-11-10"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-11-10"
+                    }
+                ],
+                "date": "2022-11-10"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-11-17"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-11-17"
+                    }
+                ],
+                "date": "2022-11-17"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-11-24"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            }
+                        ],
+                        "date": "2022-11-24"
+                    }
+                ],
+                "date": "2022-11-24"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-12-01"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-12-01"
+                    }
+                ],
+                "date": "2022-12-01"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-12-08"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2022-12-08"
+                    }
+                ],
+                "date": "2022-12-08"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2022-12-15"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-12-15"
+                    }
+                ],
+                "date": "2022-12-15"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2022-12-22"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-12-22"
+                    }
+                ],
+                "date": "2022-12-22"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2022-12-29"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            }
+                        ],
+                        "date": "2022-12-29"
+                    }
+                ],
+                "date": "2022-12-29"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-01-05"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2023-01-05"
+                    }
+                ],
+                "date": "2023-01-05"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-01-12"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-01-12"
+                    }
+                ],
+                "date": "2023-01-12"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-01-19"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-01-19"
+                    }
+                ],
+                "date": "2023-01-19"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-01-26"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-01-26"
+                    }
+                ],
+                "date": "2023-01-26"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-02-02"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            }
+                        ],
+                        "date": "2023-02-02"
+                    }
+                ],
+                "date": "2023-02-02"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-02-09"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2023-02-09"
+                    }
+                ],
+                "date": "2023-02-09"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2023-02-16"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-02-16"
+                    }
+                ],
+                "date": "2023-02-16"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-02-23"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-02-23"
+                    }
+                ],
+                "date": "2023-02-23"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-03-02"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            }
+                        ],
+                        "date": "2023-03-02"
+                    }
+                ],
+                "date": "2023-03-02"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-03-09"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2023-03-09"
+                    }
+                ],
+                "date": "2023-03-09"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-03-16"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-03-16"
+                    }
+                ],
+                "date": "2023-03-16"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-03-23"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2023-03-23"
+                    }
+                ],
+                "date": "2023-03-23"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-03-30"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-03-30"
+                    }
+                ],
+                "date": "2023-03-30"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-04-06"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2023-04-06"
+                    }
+                ],
+                "date": "2023-04-06"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            }
+                        ],
+                        "date": "2023-04-13"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-04-13"
+                    }
+                ],
+                "date": "2023-04-13"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            }
+                        ],
+                        "date": "2023-04-20"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player2",
+                                "cannot_play": [
+                                    "2022-09-08",
+                                    "2022-09-15"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-04-20"
+                    }
+                ],
+                "date": "2023-04-20"
+            },
+            {
+                "matches": [
+                    {
+                        "players": [
+                            {
+                                "name": "player1",
+                                "cannot_play": [
+                                    "2022-09-01"
+                                ]
+                            },
+                            {
+                                "name": "player4",
+                                "cannot_play": [
+                                    "2022-09-29"
+                                ]
+                            }
+                        ],
+                        "date": "2023-04-27"
+                    },
+                    {
+                        "players": [
+                            {
+                                "name": "player3",
+                                "cannot_play": [
+                                    "2022-09-22"
+                                ]
+                            },
+                            {
+                                "name": "player5",
+                                "cannot_play": []
+                            }
+                        ],
+                        "date": "2023-04-27"
+                    }
+                ],
+                "date": "2023-04-27"
+            }
+        ],
+        "players": [
+            {
+                "name": "player2",
+                "cannot_play": [
+                    "2022-09-08",
+                    "2022-09-15"
+                ]
+            },
+            {
+                "name": "player1",
+                "cannot_play": [
+                    "2022-09-01"
+                ]
+            },
+            {
+                "name": "player5",
+                "cannot_play": []
+            },
+            {
+                "name": "player3",
+                "cannot_play": [
+                    "2022-09-22"
+                ]
+            },
+            {
+                "name": "player4",
+                "cannot_play": [
+                    "2022-09-29"
+                ]
+            }
+        ]
+    }
+}
