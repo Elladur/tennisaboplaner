@@ -1,14 +1,16 @@
 """A season consisting of multiple rounds by a given start and end date."""
 
-from line_profiler import profile
-import logging
 import itertools
+import logging
 import random
 from datetime import date, time, timedelta
 
-from .match import create_match, can_match_be_added, get_players_of_match, Match
-from .round import get_players_of_round
+from line_profiler import profile
+
+from .match import (Match, can_match_be_added, create_match,
+                    get_players_of_match)
 from .player import Player
+from .round import get_players_of_round
 
 
 class Season:
@@ -62,12 +64,15 @@ class Season:
         else:
             raise ValueError()
 
-
     def _generate_valid_match(self, date: date, other_matches: list[Match]) -> int:
         indizes = list(range(len(self.players)))
         random.shuffle(indizes)
         for p, q in itertools.combinations(indizes, 2):
-            if date not in self.players[p].cannot_play and date not in self.players[q].cannot_play and p != q:
+            if (
+                date not in self.players[p].cannot_play
+                and date not in self.players[q].cannot_play
+                and p != q
+            ):
                 match = create_match(p, q)
                 if can_match_be_added(other_matches, match):
                     return match
@@ -90,10 +95,10 @@ class Season:
             return False
         date = self.dates[round_index]
         return not any(date in self.players[p].cannot_play for p in players)
-        #for p in players:
-            #if date in self.players[p].cannot_play:
-                #return False
-        #return True
+        # for p in players:
+        # if date in self.players[p].cannot_play:
+        # return False
+        # return True
 
     def check_schedule_is_valid(self) -> bool:
         for i in range(len(self.schedule)):
@@ -103,7 +108,7 @@ class Season:
 
     @profile
     def swap_players_of_existing_matches(self, round_index, p: int, q: int) -> None:
-        #self.schedule[round_index] = [m - (1 << p) + (1 << q) if p in get_players_of_match(m) else m - (1 << q) + (1 << p) if q in get_players_of_match(m) else m for m in self.schedule[round_index]]
+        # self.schedule[round_index] = [m - (1 << p) + (1 << q) if p in get_players_of_match(m) else m - (1 << q) + (1 << p) if q in get_players_of_match(m) else m for m in self.schedule[round_index]]
         for i, match in enumerate(self.schedule[round_index]):
             if p in get_players_of_match(match):
                 other_player = match[0] if match[0] != p else match[1]
@@ -114,17 +119,20 @@ class Season:
                 self.schedule[round_index][i] = create_match(p, other_player)
                 continue
 
-
     @profile
     def switch_matches(self, round1, match1, round2, match2) -> bool:
-        self.schedule[round1][match1], self.schedule[round2][match2] = self.schedule[round2][match2], self.schedule[round1][match1]
+        self.schedule[round1][match1], self.schedule[round2][match2] = (
+            self.schedule[round2][match2],
+            self.schedule[round1][match1],
+        )
         if self.check_if_round_is_valid(round1) and self.check_if_round_is_valid(round2):
             return True
         else:
-            self.schedule[round1][match1], self.schedule[round2][match2] = self.schedule[round2][match2], self.schedule[round1][match1]
+            self.schedule[round1][match1], self.schedule[round2][match2] = (
+                self.schedule[round2][match2],
+                self.schedule[round1][match1],
+            )
             return False
-
-
 
     def to_dict(self) -> dict:
         return {
@@ -142,7 +150,7 @@ class Season:
 
     @classmethod
     def from_dict(cls, data: dict) -> "Season":
-        players = {Player.from_dict(p) for p in data["players"]}
+        players = [Player.from_dict(p) for p in data["players"]]
         start = date.fromisoformat(data["start"])
         end = date.fromisoformat(data["end"])
         time_start = time.fromisoformat(data["time_start"])

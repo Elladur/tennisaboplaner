@@ -29,6 +29,5 @@ class Player:
         weight = data["weight"]
         return cls(name, cannot_play, weight)
 
-
     def __str__(self) -> str:
         return self.name
