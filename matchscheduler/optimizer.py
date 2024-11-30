@@ -2,11 +2,11 @@ import logging
 import random
 from itertools import combinations
 
+from line_profiler import profile
+
 from matchscheduler.season import Season
 
-from .player import Player
-from .round import NotValidSwapError
-from .schedule import NotValidScheduleError, ScheduleFactory
+from .match import create_match, get_players_of_match
 from .scoring_algorithm import ScoringAlgorithm
 
 
@@ -17,70 +17,78 @@ class Optimizer:
         self.logger = logging.getLogger(__name__)
         self.scorer = ScoringAlgorithm()
 
+    @profile
     def optimize_schedule_by_swapping_players(self, swaps: int) -> int:
         """Optimize the schedule by swapping players."""
-        if self.season.schedule is None:
-            raise NotValidScheduleError("No schedule generated yet.")
 
-        current_score = self.scorer.get_score(self.season.schedule)
+        current_score = self.scorer.get_score(self.season.schedule, self.season.players)
         # switch with all possible players
-        for r in self.season.schedule.rounds:
-            self.logger.debug(f"Switching all players: Starting new round {r.date}")
+        for round_index, round in enumerate(self.season.schedule):
+            self.logger.debug(
+                "Switching all players: Starting new round %s", self.season.dates[round_index]
+            )
 
-            for match_index, match in enumerate(r.matches):
-                current_players = match.players
-                for possible_pair in Player.get_all_possible_combinations(
-                    self.season.schedule.players.difference(r.get_players()).union(match.players)
-                ):
-                    if current_players != possible_pair:
-                        try:
-                            r.swap_players(match_index, possible_pair)
-                        except NotValidSwapError:
-                            continue
-                        new_score = self.scorer.get_score(self.season.schedule)
-                        if new_score < current_score:
-                            swaps += 1
-                            current_players = possible_pair
-                            current_score = new_score
-                        else:
-                            # swap back to original match
-                            r.swap_players(match_index, current_players)
+            for match_index, current_match in enumerate(round):
+                for p, q in combinations(range(len(self.season.players)), 2):
+                    possible_match = create_match(p, q)
+                    if possible_match == current_match:
+                        continue
+                    changed = self.season.change_match(round_index, match_index, possible_match)
+                    if not changed:
+                        continue
+                    new_score = self.scorer.get_score(self.season.schedule, self.season.players)
+                    if new_score < current_score:
+                        swaps += 1
+                        self.logger.debug(
+                            "Switched players - old score = %.2f - new score = %.2f",
+                            current_score,
+                            new_score,
+                        )
+                        current_score = new_score
+                        current_match = possible_match
+                    else:
+                        # swap back to original match
+                        self.season.change_match(round_index, match_index, current_match)
 
-        current_score = self.scorer.get_score(self.season.schedule)
+        current_score = self.scorer.get_score(self.season.schedule, self.season.players)
         # switch players between matches of a round
-        for r in self.season.schedule.rounds:
-            self.logger.debug(f"Switching players inside round: Starting new round {r.date}")
+        for round_index, round in enumerate(self.season.schedule):
+            self.logger.debug(
+                "Switching players inside round:" + "Starting new round %s",
+                self.season.dates[round_index],
+            )
             # get all combinations of match indexes
-            for i, j in combinations(range(len(r.matches)), 2):
-                match1 = r.matches[i]
-                match2 = r.matches[j]
-                for player1 in match1.players:
-                    for player2 in match2.players:
-                        try:
-                            r.swap_players_of_existing_matches(i, j, {player1, player2})
-                        except NotValidSwapError:
-                            continue
-                        new_score = self.scorer.get_score(self.season.schedule)
-                        if new_score < current_score:
-                            swaps += 1
-                            current_score = new_score
-                        else:
-                            # swap back to original matches
-                            r.swap_players_of_existing_matches(i, j, {player1, player2})
+            for match1, match2 in combinations(range(self.season.num_courts), 2):
+                for player1, player2 in [
+                    (p1, p2)
+                    for p1 in get_players_of_match(round[match1])
+                    for p2 in get_players_of_match(round[match2])
+                ]:
+                    self.season.swap_players_of_existing_matches(round_index, player1, player2)
+                    new_score = self.scorer.get_score(self.season.schedule, self.season.players)
+                    if new_score < current_score:
+                        swaps += 1
+                        self.logger.debug(
+                            "Switched players insied existing round "
+                            + "- old score = %.2f - new score = %.2f",
+                            current_score,
+                            new_score,
+                        )
+                        current_score = new_score
+                        break
+                    # swap back to original matches
+                    self.season.swap_players_of_existing_matches(round_index, player1, player2)
 
         return swaps
 
+    @profile
     def optimize_schedule_by_swapping_matches(self, swaps: int) -> int:
         """Optimize the schedule by swapping matches."""
         # cant be removed even if we swap players between existing matches
         # it gives an additional random factor to the algorithmus
-        if self.season.schedule is None:
-            raise NotValidScheduleError("No schedule generated yet.")
 
         indizes = [
-            (i, j)
-            for i in range(len(self.season.schedule.rounds))
-            for j in range(self.season.num_courts)
+            (i, j) for i in range(len(self.season.schedule)) for j in range(self.season.num_courts)
         ]
 
         # shuffle index to have a random factor
@@ -88,47 +96,47 @@ class Optimizer:
         index_combination = list(combinations(indizes, 2))
         random.shuffle(index_combination)
 
-        current_score = self.scorer.get_score(self.season.schedule)
+        current_score = self.scorer.get_score(self.season.schedule, self.season.players)
 
         for (round_index1, match_index1), (
             round_index2,
             match_index2,
         ) in index_combination:
             self.logger.debug(
-                f"try swapping Round {round_index1} "
-                + f"Match {match_index1} with Round {round_index2} "
-                + f"Match {match_index2}"
+                "try swapping Round %i Match %i with Round %i Match %i",
+                round_index1,
+                match_index1,
+                round_index2,
+                match_index2,
             )
             if (
-                self.season.schedule.rounds[round_index1].matches[match_index1].players
-                == self.season.schedule.rounds[round_index2].matches[match_index2].players
+                self.season.schedule[round_index1][match_index1]
+                == self.season.schedule[round_index2][match_index2]
             ):
                 continue
-
-            try:
-                self.season.schedule.swap_matches(
-                    round_index1, match_index1, round_index2, match_index2
-                )
-            except NotValidSwapError:
+            switched = self.season.switch_matches(
+                round_index1, match_index1, round_index2, match_index2
+            )
+            if not switched:
                 continue
-            new_score = self.scorer.get_score(self.season.schedule)
+            new_score = self.scorer.get_score(self.season.schedule, self.season.players)
             if new_score < current_score:
                 swaps += 1
+                self.logger.debug(
+                    "Switched matches - old score = %.2f - new score = %.2f",
+                    current_score,
+                    new_score,
+                )
                 current_score = new_score
             else:
                 # swap back to original matches
-                self.season.schedule.swap_matches(
-                    round_index1, match_index1, round_index2, match_index2
-                )
+                self.season.switch_matches(round_index1, match_index1, round_index2, match_index2)
+
         return swaps
 
+    @profile
     def optimize_schedule(self) -> float:
         """Optimize the schedule for this season."""
-        if self.season.schedule is None:
-            self.season.schedule = ScheduleFactory.generate_valid_schedule(
-                self.season.players, self.season.dates, self.season.num_courts
-            )
-
         swaps = 0
         while True:
             self.logger.info("Starting new round of optimizing ...")
@@ -141,13 +149,12 @@ class Optimizer:
 
             if swaps > 0:
                 self.logger.info(
-                    f"Swapped {swaps} times. "
-                    + "The current score is: "
-                    + f"{self.scorer.get_score(self.season.schedule)}"  # type: ignore
+                    "Swapped {swaps} times. The current score is: %.3f ",
+                    self.scorer.get_score(self.season.schedule, self.season.players),
                 )
                 swaps = 0
             else:
                 self.logger.info("No more swaps feasible.")
                 break
 
-        return self.scorer.get_score(self.season.schedule)
+        return self.scorer.get_score(self.season.schedule, self.season.players)

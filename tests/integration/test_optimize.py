@@ -18,8 +18,9 @@ def test_optimize(request):
         o = Optimizer(s)
         score = o.optimize_schedule()
 
+        expected_season = Season.from_dict(json.load(expected))
         expected_value = ScoringAlgorithm().get_score(
-            Season.from_dict(json.load(expected)).schedule
+            expected_season.schedule, expected_season.players
         )
         assert score <= expected_value * 1.1
 

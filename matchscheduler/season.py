@@ -1,10 +1,16 @@
 """A season consisting of multiple rounds by a given start and end date."""
 
+import itertools
 import logging
+import random
 from datetime import date, time, timedelta
 
+from line_profiler import profile
+
+from .match import (Match, can_match_be_added, create_match,
+                    get_players_of_match)
 from .player import Player
-from .schedule import Schedule
+from .round import get_players_of_round
 
 
 class Season:
@@ -12,7 +18,7 @@ class Season:
 
     def __init__(
         self,
-        players: set[Player],
+        players: list[Player],
         start: date,
         end: date,
         number_courts: int,
@@ -40,8 +46,85 @@ class Season:
                 self.dates.append(d)
             d += timedelta(days=7)
 
-        self.schedule: Schedule | None = None
+        self.schedule = self._generate_schedule()
         self.logger = logging.getLogger(__name__)
+
+    def _generate_schedule(self) -> list[list[Match]]:
+        season = []
+        for d in self.dates:
+            season.append(self._generate_valid_round(d))
+        return season
+
+    def _generate_valid_round(self, match_date: date) -> list[Match]:
+        rounds: list[Match] = []
+        for _ in range(self.num_courts):
+            rounds.append(self._generate_valid_match(match_date, rounds))
+        if len(rounds) == self.num_courts:
+            return rounds
+        raise ValueError()
+
+    def _generate_valid_match(self, match_date: date, other_matches: list[Match]) -> Match:
+        indizes = list(range(len(self.players)))
+        random.shuffle(indizes)
+        for p, q in itertools.combinations(indizes, 2):
+            if (
+                match_date not in self.players[p].cannot_play
+                and match_date not in self.players[q].cannot_play
+                and p != q
+            ):
+                match = create_match(p, q)
+                if can_match_be_added(other_matches, match):
+                    return match
+        raise ValueError()
+
+    @profile
+    def change_match(self, round_index: int, match_index: int, match: Match) -> bool:
+        old_match = self.schedule[round_index][match_index]
+        self.schedule[round_index][match_index] = match
+        if self.check_if_round_is_valid(round_index):
+            return True
+        self.schedule[round_index][match_index] = old_match
+        return False
+
+    @profile
+    def check_if_round_is_valid(self, round_index: int) -> bool:
+        players = get_players_of_round(self.schedule[round_index])
+        if len(players) != self.num_courts * 2:
+            return False
+        match_date = self.dates[round_index]
+        return not any(match_date in self.players[p].cannot_play for p in players)
+
+    def check_schedule_is_valid(self) -> bool:
+        for i in range(len(self.schedule)):
+            if not self.check_if_round_is_valid(i):
+                return False
+        return True
+
+    @profile
+    def swap_players_of_existing_matches(self, round_index: int, p: int, q: int) -> None:
+        for i, match in enumerate(self.schedule[round_index]):
+            if p in get_players_of_match(match):
+                other_player = match[0] if match[0] != p else match[1]
+                self.schedule[round_index][i] = create_match(q, other_player)
+                continue
+            if q in get_players_of_match(match):
+                other_player = match[0] if match[0] != q else match[1]
+                self.schedule[round_index][i] = create_match(p, other_player)
+                continue
+
+    @profile
+    def switch_matches(self, round1: int, match1: int, round2: int, match2: int) -> bool:
+        self.schedule[round1][match1], self.schedule[round2][match2] = (
+            self.schedule[round2][match2],
+            self.schedule[round1][match1],
+        )
+        if self.check_if_round_is_valid(round1) and self.check_if_round_is_valid(round2):
+            return True
+        self.schedule[round1][match1], self.schedule[round2][match2] = (
+            self.schedule[round2][match2],
+            self.schedule[round1][match1],
+        )
+        return False
 
     def to_dict(self) -> dict:
         return {
@@ -54,12 +137,12 @@ class Season:
             "excluded_dates": [str(d) for d in self.excluded_dates],
             "overall_cost": self.overall_cost,
             "calendar_title": self.calendar_title,
-            "schedule": self.schedule.to_dict() if self.schedule is not None else "",
+            "schedule": self.schedule,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "Season":
-        players = {Player.from_dict(p) for p in data["players"]}
+        players = [Player.from_dict(p) for p in data["players"]]
         start = date.fromisoformat(data["start"])
         end = date.fromisoformat(data["end"])
         time_start = time.fromisoformat(data["time_start"])
@@ -79,13 +162,13 @@ class Season:
             overall_cost,
             calendar_title,
         )
-        instance.schedule = Schedule.from_dict(data["schedule"])
+        instance.schedule = data["schedule"]
         return instance
 
     @classmethod
     def create_from_settings(cls, data: dict) -> "Season":
         """Create a Season from a dictionary."""
-        players = {Player.from_dict(p) for p in data["players"]}
+        players = [Player.from_dict(p) for p in data["players"]]
         start = date.fromisoformat(data["abo"]["start"])
         end = date.fromisoformat(data["abo"]["end"])
         excluded_dates = data["abo"]["excluded_dates"]
