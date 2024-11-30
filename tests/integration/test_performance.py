@@ -6,7 +6,7 @@ from matchscheduler.optimizer import Optimizer
 from matchscheduler.season import Season
 
 
-def test_optimize(request):
+def test_performance(request):
     base_path = Path(request.path).parent
     with open(f"{base_path}/input/settings.json", "r") as input:
         # load settings.json into data object

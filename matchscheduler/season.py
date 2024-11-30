@@ -6,7 +6,7 @@ import itertools
 import random
 from datetime import date, time, timedelta
 
-from .match import create_match, can_match_be_added, get_players_of_match
+from .match import create_match, can_match_be_added, get_players_of_match, Match
 from .round import get_players_of_round
 from .player import Player
 
@@ -47,13 +47,13 @@ class Season:
         self.schedule = self._generate_schedule()
         self.logger = logging.getLogger(__name__)
 
-    def _generate_schedule(self) -> list[list[int]]:
+    def _generate_schedule(self) -> list[list[Match]]:
         season = []
         for d in self.dates:
             season.append(self._generate_valid_round(d))
         return season
 
-    def _generate_valid_round(self, date: date) -> list[int]:
+    def _generate_valid_round(self, date: date) -> list[Match]:
         rounds: list[int] = []
         for i in range(self.num_courts):
             rounds.append(self._generate_valid_match(date, rounds))
@@ -63,7 +63,7 @@ class Season:
             raise ValueError()
 
 
-    def _generate_valid_match(self, date: date, other_matches: list[int]) -> int:
+    def _generate_valid_match(self, date: date, other_matches: list[Match]) -> int:
         indizes = list(range(len(self.players)))
         random.shuffle(indizes)
         for p, q in itertools.combinations(indizes, 2):
@@ -74,7 +74,7 @@ class Season:
         raise ValueError()
 
     @profile
-    def change_match(self, round_index, match_index, match: int) -> bool:
+    def change_match(self, round_index, match_index, match: Match) -> bool:
         old_match = self.schedule[round_index][match_index]
         self.schedule[round_index][match_index] = match
         if self.check_if_round_is_valid(round_index):
@@ -95,16 +95,24 @@ class Season:
                 #return False
         #return True
 
+    def check_schedule_is_valid(self) -> bool:
+        for i in range(len(self.schedule)):
+            if not self.check_if_round_is_valid(i):
+                return False
+        return True
+
     @profile
     def swap_players_of_existing_matches(self, round_index, p: int, q: int) -> None:
-        self.schedule[round_index] = [m - (1 << p) + (1 << q) if p in get_players_of_match(m) else m - (1 << q) + (1 << p) if q in get_players_of_match(m) else m for m in self.schedule[round_index]]
-        #for i, match in enumerate(self.schedule[round_index]):
-            #if p in get_players_of_match(match):
-                #self.schedule[round_index][i] = match - (1 << p) + (1 << q)
-                #continue
-            #if q in get_players_of_match(match):
-                #self.schedule[round_index][i] = match - (1 << q) + (1 << p)
-                #continue
+        #self.schedule[round_index] = [m - (1 << p) + (1 << q) if p in get_players_of_match(m) else m - (1 << q) + (1 << p) if q in get_players_of_match(m) else m for m in self.schedule[round_index]]
+        for i, match in enumerate(self.schedule[round_index]):
+            if p in get_players_of_match(match):
+                other_player = match[0] if match[0] != p else match[1]
+                self.schedule[round_index][i] = create_match(q, other_player)
+                continue
+            if q in get_players_of_match(match):
+                other_player = match[0] if match[0] != q else match[1]
+                self.schedule[round_index][i] = create_match(p, other_player)
+                continue
 
 
     @profile

@@ -3,7 +3,8 @@ import itertools
 from line_profiler import profile
 
 from .player import Player
-from .schedule import get_match_indizes_of_player
+from .match import create_match
+from .schedule import get_match_indizes_of_player, get_match_indizes_of_match
 
 
 class ScoringAlgorithm:
@@ -32,7 +33,7 @@ class ScoringAlgorithm:
         for p, q in itertools.combinations(range(len(players)), 2):
             if p != q:
                 combined_weight = players[p].weight * players[q].weight
-                all_possible_matches[(p, q)] = len([match for match in get_match_indizes_of_player(schedule, p) if match in get_match_indizes_of_player(schedule, q)]) / combined_weight
+                all_possible_matches[(p, q)] = len(get_match_indizes_of_match(schedule, create_match(p, q))) / combined_weight
         return np.std(list(all_possible_matches.values()))  # type: ignore
 
     @profile
@@ -54,7 +55,7 @@ class ScoringAlgorithm:
 
         for p, q in itertools.combinations(range(len(players)), 2):
             if p != q:
-                matches_playing = [match for match in get_match_indizes_of_player(schedule, p) if match in get_match_indizes_of_player(schedule, q)]
+                matches_playing = get_match_indizes_of_match(schedule, create_match(p,q))
                 rounds_playing = sorted([x[0] for x in matches_playing])
                 if len(rounds_playing) > 1:
                     std_pause_between_matches[p,q] = np.std([rounds_playing[j + 1] - rounds_playing[j] for j in range(len(rounds_playing) - 1)] + [rounds_playing[0], len(schedule) - rounds_playing[-1]])

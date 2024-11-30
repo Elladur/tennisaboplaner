@@ -2,18 +2,25 @@
 #a schedule is valid if all rounds are valid"""
 
 #from datetime import date
+from line_profiler import profile
 
-from .match import get_players_of_match
+from .match import get_players_of_match, Match
 #from .player import Player
 #from .round import NotValidRoundError, NotValidSwapError, Round, RoundFactory
 
-def get_match_indizes_of_player(schedule: list[list[int]], player_index: int) -> list[list[int]]:
-    matches: list[list[int]] = []
-    for round_index, round in enumerate(schedule):
-        for match_index, match in enumerate(round):
-            if player_index in get_players_of_match(match):
-                matches.append([round_index, match_index])
-    return matches
+@profile
+def get_match_indizes_of_player(schedule: list[list[Match]], player_index: int) -> list[tuple[int]]:
+    #match_indizes: list[list[int]] = []
+    return [(round_index, match_index) for round_index, round in enumerate(schedule) for match_index, match in enumerate(round) if player_index in get_players_of_match(match)]
+    #for round_index, round in enumerate(schedule):
+        #for match_index, match in enumerate(round):
+            #if player_index in get_players_of_match(match):
+                #match_indizes.append([round_index, match_index])
+    #return match_indizes
+
+@profile
+def get_match_indizes_of_match(schedule: list[list[Match]], arg_match:Match) -> list[tuple[int]]:
+    return [(round_index, match_index) for round_index, round in enumerate(schedule) for match_index, match in enumerate(round) if match == arg_match]
 
 
 #class Schedule:

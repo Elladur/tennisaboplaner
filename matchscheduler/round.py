@@ -2,14 +2,14 @@
 
 
 from line_profiler import profile
-from .match import convert_match_to_string, get_players_of_match
+from .match import convert_match_to_string, get_players_of_match, Match
 from .player import Player
 
 @profile
-def get_players_of_round(round: list[int]) -> set[int]:
+def get_players_of_round(round: list[Match]) -> set[int]:
     players = []
     for m in round:
-        players += get_players_of_match(m)
+        players += list(get_players_of_match(m))
     return set(players)
 
 def convert_round_to_string(round: list[int], players: list[Player]):
