@@ -1,78 +1,63 @@
 import numpy as np
+import itertools
+from line_profiler import profile
 
 from .player import Player
-from .schedule import Schedule
+from .schedule import get_match_indizes_of_player
 
 
 class ScoringAlgorithm:
-
-    def get_score(self, schedule: Schedule) -> float:
+    @profile
+    def get_score(self, schedule: list[list[int]], players: list[Player]) -> float:
         """Get the score of this schedule."""
-        num_rounds = len(schedule.rounds)
+        num_rounds = len(schedule)
         score = (
-            num_rounds * self.get_std_of_all_possible_matches(schedule)
-            + num_rounds * self.get_std_of_player_times_playing(schedule)
-            + self.get_std_of_pause_between_matches(schedule)  # is calculated as sum of std
-            + self.get_std_of_pause_between_playing(schedule)  # is calculated as sum of std
+            num_rounds * self.get_std_of_all_possible_matches(schedule, players)
+            + num_rounds * self.get_std_of_player_times_playing(schedule, players)
+            + self.get_std_of_pause_between_matches(schedule, players)  # is calculated as sum of std
+            + self.get_std_of_pause_between_playing(schedule, players)  # is calculated as sum of std
         )
         return score
 
-    def get_std_of_player_times_playing(self, schedule: Schedule) -> float:
+    @profile
+    def get_std_of_player_times_playing(self, schedule: list[list[int]], players: list[Player]) -> float:
         """Get the standard deviation of times playing for this schedule."""
-        weighted_times_playing: dict[Player, float] = {}
-        for p in schedule.players:
-            weighted_times_playing[p] = len(schedule.get_matches_of_player(p)) / p.weight
-        return np.std(list(weighted_times_playing.values()))  # type: ignore
+        weighted_times_playing = [len(get_match_indizes_of_player(schedule, i)) / p.weight for i, p in enumerate(players)]
+        return np.std(weighted_times_playing)
 
-    def get_std_of_all_possible_matches(self, schedule: Schedule) -> float:
+    @profile
+    def get_std_of_all_possible_matches(self, schedule: list[list[int]], players: list[Player]) -> float:
         """Get the standard deviation of all possible matches for this schedule."""
-        all_possible_matches: dict[tuple[Player, Player], float] = {}
-        for encounter in Player.get_all_possible_combinations(schedule.players):
-            p, q = encounter
-            combined_weight = p.weight * q.weight
-            all_possible_matches[Player.set_to_tuple(encounter)] = (
-                len(schedule.get_matches_of_players(encounter)) / combined_weight
-            )
+        all_possible_matches: dict[tuple[int, int], float] = {}
+        for p, q in itertools.combinations(range(len(players)), 2):
+            if p != q:
+                combined_weight = players[p].weight * players[q].weight
+                all_possible_matches[(p, q)] = len([match for match in get_match_indizes_of_player(schedule, p) if match in get_match_indizes_of_player(schedule, q)]) / combined_weight
         return np.std(list(all_possible_matches.values()))  # type: ignore
 
-    def get_std_of_pause_between_playing(self, schedule: Schedule) -> float:
+    @profile
+    def get_std_of_pause_between_playing(self, schedule: list[list[int]], players: list[Player]) -> float:
         """Get the standard deviation of pause between playing for this schedule."""
-        pause_between_playing: dict[Player, float] = {}
-        min_date = min((r.date for r in schedule.rounds))
-        max_date = max((r.date for r in schedule.rounds))
-        for p in schedule.players:
-            matches = schedule.get_matches_of_player(p)
-            matches.sort(key=lambda m: m.date)
-            if len(matches) > 1:
-                pause_between_playing[p] = np.std(  # type: ignore
-                    [(matches[i + 1].date - matches[i].date).days for i in range(len(matches) - 1)]
-                    + [  # add difference to first and last date
-                        (matches[0].date - min_date).days,
-                        (max_date - matches[-1].date).days,
-                    ]
-                )
+        pause_between_playing = [0] * len(players)
+        for i in range(len(players)):
+            rounds_playing = [x[0] for x in get_match_indizes_of_player(schedule, i)]
+            if len(rounds_playing) > 1:
+                pause_between_playing[i] = np.std([rounds_playing[j + 1] - rounds_playing[j] for j in range(len(rounds_playing) - 1)] + [rounds_playing[0], len(schedule) - rounds_playing[-1]])
             else:
-                pause_between_playing[p] = (max_date - min_date).days  # set to maximal
-        return np.sum(list(pause_between_playing.values()))  # type: ignore
+                pause_between_playing[i] = len(schedule)
+        return np.sum(pause_between_playing)
 
-    def get_std_of_pause_between_matches(self, schedule: Schedule) -> float:
+    @profile
+    def get_std_of_pause_between_matches(self, schedule: list[list[int]], players: list[Player]) -> float:
         """Get the standard deviation of pause between matches for this schedule."""
-        min_date = min((r.date for r in schedule.rounds))
-        max_date = max((r.date for r in schedule.rounds))
-        pause_between_matches: dict[tuple[Player, Player], float] = {}
-        for encounter in Player.get_all_possible_combinations(schedule.players):
-            matches = schedule.get_matches_of_players(encounter)
-            matches.sort(key=lambda m: m.date)
-            if len(matches) > 1:
-                pause_between_matches[Player.set_to_tuple(encounter)] = np.std(  # type: ignore
-                    [(matches[i + 1].date - matches[i].date).days for i in range(len(matches) - 1)]
-                    + [  # add difference to first and last date
-                        (matches[0].date - min_date).days,
-                        (max_date - matches[-1].date).days,
-                    ]
-                )
-            else:
-                pause_between_matches[Player.set_to_tuple(encounter)] = (
-                    max_date - min_date  # set to maximal value
-                ).days
-        return np.sum(list(pause_between_matches.values()))  # type: ignore
+        std_pause_between_matches: dict[tuple[int, int], float] = {}
+
+        for p, q in itertools.combinations(range(len(players)), 2):
+            if p != q:
+                matches_playing = [match for match in get_match_indizes_of_player(schedule, p) if match in get_match_indizes_of_player(schedule, q)]
+                rounds_playing = sorted([x[0] for x in matches_playing])
+                if len(rounds_playing) > 1:
+                    std_pause_between_matches[p,q] = np.std([rounds_playing[j + 1] - rounds_playing[j] for j in range(len(rounds_playing) - 1)] + [rounds_playing[0], len(schedule) - rounds_playing[-1]])
+                else:
+                    std_pause_between_matches[p,q] = len(schedule)
+        return np.sum(list(std_pause_between_matches.values()))

@@ -1,18 +1,17 @@
 """Player class for the match scheduler."""
 
 from datetime import date
-from itertools import combinations
 
 
 class Player:
     """A player of the match scheduler."""
 
     name: str
-    cannot_play: list[date]
+    cannot_play: set[date]
 
     def __init__(self, name: str, cannot_play: list[str], weight: float = 1):
         self.name = name
-        self.cannot_play = [date.fromisoformat(i) for i in cannot_play]
+        self.cannot_play = {date.fromisoformat(i) for i in cannot_play}
         self.weight = weight
 
     def to_dict(self) -> dict:

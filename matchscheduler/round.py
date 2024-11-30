@@ -1,12 +1,16 @@
 """A round of a season consisting of a list of matches."""
 
-from datetime import date
 
-from .match import Match, MatchFactory, NotValidMatchError, convert_match_to_string
+from line_profiler import profile
+from .match import convert_match_to_string, get_players_of_match
 from .player import Player
 
-def create_round(**matches:int):
-    return [m for m in matches]
+@profile
+def get_players_of_round(round: list[int]) -> set[int]:
+    players = []
+    for m in round:
+        players += get_players_of_match(m)
+    return set(players)
 
 def convert_round_to_string(round: list[int], players: list[Player]):
     "\n".join([convert_match_to_string(m, players) for m in round])

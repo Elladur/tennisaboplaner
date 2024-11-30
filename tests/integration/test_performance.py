@@ -12,12 +12,13 @@ def test_optimize(request):
         # load settings.json into data object
         data = json.load(input)
         s = Season.create_from_settings(data)
+        x = s.schedule
         o = Optimizer(s)
 
         start_time = time.time()
         for _ in range(5):
             o.optimize_schedule()
-            s.schedule = None
+            s.schedule = x
         end_time = time.time()
 
         elapsed_time = end_time - start_time
