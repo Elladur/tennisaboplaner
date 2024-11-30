@@ -6,8 +6,7 @@ from line_profiler import profile
 
 from matchscheduler.season import Season
 
-from .match import can_match_be_added, create_match, get_players_of_match
-from .player import Player
+from .match import create_match, get_players_of_match
 from .scoring_algorithm import ScoringAlgorithm
 
 
@@ -41,7 +40,8 @@ class Optimizer:
                     if new_score < current_score:
                         swaps += 1
                         self.logger.debug(
-                            f"Switched players - old score={current_score:.2f} - new score={new_score:.2f}"
+                            f"Switched players - old score={current_score:.2f} "
+                            + f" - new score={new_score:.2f}"
                         )
                         current_score = new_score
                         current_match = possible_match
@@ -53,7 +53,8 @@ class Optimizer:
         # switch players between matches of a round
         for round_index, round in enumerate(self.season.schedule):
             self.logger.debug(
-                f"Switching players inside round: Starting new round {self.season.dates[round_index]}"
+                "Switching players inside round:"
+                + f"Starting new round {self.season.dates[round_index]}"
             )
             # get all combinations of match indexes
             for match1, match2 in combinations(range(self.season.num_courts), 2):
@@ -67,13 +68,13 @@ class Optimizer:
                     if new_score < current_score:
                         swaps += 1
                         self.logger.debug(
-                            f"switch players inside existing round - old score={current_score:.2f} - new score={new_score:.2f}"
+                            "switch players inside existing round -"
+                            + f" old score={current_score:.2f} - new score={new_score:.2f}"
                         )
                         current_score = new_score
                         break
-                    else:
-                        # swap back to original matches
-                        self.season.swap_players_of_existing_matches(round_index, player1, player2)
+                    # swap back to original matches
+                    self.season.swap_players_of_existing_matches(round_index, player1, player2)
 
         return swaps
 

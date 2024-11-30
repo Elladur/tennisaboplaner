@@ -18,8 +18,6 @@ def test_optimize(request):
         o = Optimizer(s)
         score = o.optimize_schedule()
 
-        a = json.dumps(s.to_dict())
-
         expected_season = Season.from_dict(json.load(expected))
         expected_value = ScoringAlgorithm().get_score(
             expected_season.schedule, expected_season.players
