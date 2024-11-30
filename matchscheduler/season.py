@@ -55,21 +55,21 @@ class Season:
             season.append(self._generate_valid_round(d))
         return season
 
-    def _generate_valid_round(self, date: date) -> list[Match]:
+    def _generate_valid_round(self, match_date: date) -> list[Match]:
         rounds: list[Match] = []
         for _ in range(self.num_courts):
-            rounds.append(self._generate_valid_match(date, rounds))
+            rounds.append(self._generate_valid_match(match_date, rounds))
         if len(rounds) == self.num_courts:
             return rounds
         raise ValueError()
 
-    def _generate_valid_match(self, date: date, other_matches: list[Match]) -> Match:
+    def _generate_valid_match(self, match_date: date, other_matches: list[Match]) -> Match:
         indizes = list(range(len(self.players)))
         random.shuffle(indizes)
         for p, q in itertools.combinations(indizes, 2):
             if (
-                date not in self.players[p].cannot_play
-                and date not in self.players[q].cannot_play
+                match_date not in self.players[p].cannot_play
+                and match_date not in self.players[q].cannot_play
                 and p != q
             ):
                 match = create_match(p, q)
@@ -91,8 +91,8 @@ class Season:
         players = get_players_of_round(self.schedule[round_index])
         if len(players) != self.num_courts * 2:
             return False
-        date = self.dates[round_index]
-        return not any(date in self.players[p].cannot_play for p in players)
+        match_date = self.dates[round_index]
+        return not any(match_date in self.players[p].cannot_play for p in players)
 
     def check_schedule_is_valid(self) -> bool:
         for i in range(len(self.schedule)):

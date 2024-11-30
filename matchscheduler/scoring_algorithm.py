@@ -33,7 +33,7 @@ class ScoringAlgorithm:
         weighted_times_playing = [
             len(get_match_indizes_of_player(schedule, i)) / p.weight for i, p in enumerate(players)
         ]
-        return np.std(weighted_times_playing) # type: ignore
+        return np.std(weighted_times_playing)  # type: ignore
 
     @profile
     def get_std_of_all_possible_matches(

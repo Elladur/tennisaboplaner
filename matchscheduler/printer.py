@@ -18,7 +18,10 @@ class Printer:
     # export schedule into a excel file with each round as a row
     # consisting of the date in the first column and in every next column a match
     def export(self, folderpath: Path) -> None:
-        """Export this schedule to an Excel file."""
+        self.export_excel(folderpath)
+        self.export_calendar(folderpath)
+
+    def export_excel(self, folderpath: Path) -> None:
         excel = Workbook()
         sheet = excel.active
         sheet.title = "Schedule"  # type: ignore
@@ -101,6 +104,7 @@ class Printer:
 
         excel.save(folderpath / "schedule.xlsx")
 
+    def export_calendar(self, folderpath: Path) -> None:
         # create a calendar for each player with his matches
         for i, p in enumerate(self.season.players):
             cal = Calendar()

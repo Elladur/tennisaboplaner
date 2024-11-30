@@ -25,7 +25,7 @@ class Optimizer:
         # switch with all possible players
         for round_index, round in enumerate(self.season.schedule):
             self.logger.debug(
-                f"Switching all players: Starting new round {self.season.dates[round_index]}"
+                "Switching all players: Starting new round %s", self.season.dates[round_index]
             )
 
             for match_index, current_match in enumerate(round):
@@ -40,8 +40,9 @@ class Optimizer:
                     if new_score < current_score:
                         swaps += 1
                         self.logger.debug(
-                            f"Switched players - old score={current_score:.2f} "
-                            + f" - new score={new_score:.2f}"
+                            "Switched players - old score = %.2f - new score = %.2f",
+                            current_score,
+                            new_score,
                         )
                         current_score = new_score
                         current_match = possible_match
@@ -53,8 +54,8 @@ class Optimizer:
         # switch players between matches of a round
         for round_index, round in enumerate(self.season.schedule):
             self.logger.debug(
-                "Switching players inside round:"
-                + f"Starting new round {self.season.dates[round_index]}"
+                "Switching players inside round:" + "Starting new round %s",
+                self.season.dates[round_index],
             )
             # get all combinations of match indexes
             for match1, match2 in combinations(range(self.season.num_courts), 2):
@@ -68,8 +69,10 @@ class Optimizer:
                     if new_score < current_score:
                         swaps += 1
                         self.logger.debug(
-                            "switch players inside existing round -"
-                            + f" old score={current_score:.2f} - new score={new_score:.2f}"
+                            "Switched players insied existing round "
+                            + "- old score = %.2f - new score = %.2f",
+                            current_score,
+                            new_score,
                         )
                         current_score = new_score
                         break
@@ -100,9 +103,11 @@ class Optimizer:
             match_index2,
         ) in index_combination:
             self.logger.debug(
-                f"try swapping Round {round_index1} "
-                + f"Match {match_index1} with Round {round_index2} "
-                + f"Match {match_index2}"
+                "try swapping Round %i Match %i with Round %i Match %i",
+                round_index1,
+                match_index1,
+                round_index2,
+                match_index2,
             )
             if (
                 self.season.schedule[round_index1][match_index1]
@@ -118,7 +123,9 @@ class Optimizer:
             if new_score < current_score:
                 swaps += 1
                 self.logger.debug(
-                    f"switched matches - old score={current_score:.2f} - new score={new_score:.2f}"
+                    "Switched matches - old score = %.2f - new score = %.2f",
+                    current_score,
+                    new_score,
                 )
                 current_score = new_score
             else:
@@ -142,9 +149,8 @@ class Optimizer:
 
             if swaps > 0:
                 self.logger.info(
-                    f"Swapped {swaps} times. "
-                    + "The current score is: "
-                    + f"{self.scorer.get_score(self.season.schedule, self.season.players)}"  # type: ignore
+                    "Swapped {swaps} times. The current score is: %.3f ",
+                    self.scorer.get_score(self.season.schedule, self.season.players),
                 )
                 swaps = 0
             else:

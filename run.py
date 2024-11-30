@@ -28,4 +28,4 @@ if __name__ == "__main__":
         score, s = best_result["score"], best_result["season"]
         p = Printer(s)
         p.export(Path(os.getcwd() + "/output/"))
-        logger.info(f"Current Schedule score is = {score}")
+        logger.info("Current Schedule score is = %.3f", score)
