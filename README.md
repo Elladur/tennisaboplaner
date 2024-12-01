@@ -11,8 +11,8 @@ Python needs to be installed.
 Adapt settings.json to your needs and execute `run.py`. 
 
 ```shell
-poetry install
-poetry run run.py
+uv lock
+uv run run.py
 ```
 
 It will generate a Excel-File in the output-folder which represents the schedule. Additionally, it will create a calendar (*.ics) for each player. 

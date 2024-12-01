@@ -33,7 +33,7 @@ class ScoringAlgorithm:
         weighted_times_playing = [
             len(get_match_indizes_of_player(schedule, i)) / p.weight for i, p in enumerate(players)
         ]
-        return np.std(weighted_times_playing)  # type: ignore
+        return float(np.std(weighted_times_playing))
 
     @profile
     def get_std_of_all_possible_matches(
@@ -54,16 +54,18 @@ class ScoringAlgorithm:
         self, schedule: list[list[int]], players: list[Player]
     ) -> float:
         """Get the standard deviation of pause between playing for this schedule."""
-        pause_between_playing = [0] * len(players)
+        pause_between_playing: list[float] = [0] * len(players)
         for i in range(len(players)):
             rounds_playing = [x[0] for x in get_match_indizes_of_player(schedule, i)]
             if len(rounds_playing) > 1:
-                pause_between_playing[i] = np.std(
-                    [
-                        rounds_playing[j + 1] - rounds_playing[j]
-                        for j in range(len(rounds_playing) - 1)
-                    ]
-                    + [rounds_playing[0], len(schedule) - rounds_playing[-1]]
+                pause_between_playing[i] = float(
+                    np.std(
+                        [
+                            rounds_playing[j + 1] - rounds_playing[j]
+                            for j in range(len(rounds_playing) - 1)
+                        ]
+                        + [rounds_playing[0], len(schedule) - rounds_playing[-1]]
+                    )
                 )
             else:
                 pause_between_playing[i] = len(schedule)
@@ -81,12 +83,14 @@ class ScoringAlgorithm:
                 matches_playing = get_match_indizes_of_match(schedule, create_match(p, q))
                 rounds_playing = sorted([x[0] for x in matches_playing])
                 if len(rounds_playing) > 1:
-                    std_pause_between_matches[p, q] = np.std(
-                        [
-                            rounds_playing[j + 1] - rounds_playing[j]
-                            for j in range(len(rounds_playing) - 1)
-                        ]
-                        + [rounds_playing[0], len(schedule) - rounds_playing[-1]]
+                    std_pause_between_matches[p, q] = float(
+                        np.std(
+                            [
+                                rounds_playing[j + 1] - rounds_playing[j]
+                                for j in range(len(rounds_playing) - 1)
+                            ]
+                            + [rounds_playing[0], len(schedule) - rounds_playing[-1]]
+                        )
                     )
                 else:
                     std_pause_between_matches[p, q] = len(schedule)
