@@ -14,7 +14,6 @@
 			"VARIANT": "3.12-bullseye",
 			// Options
 			"NODE_VERSION": "lts/*",
-			//"POETRY_VERSION": "1.8.2",
 			//"NOX_VERSION": "2022.1.7"
 			// TODO Add esbonio>=0.11.0 (required for RST support in VSC)
 		}

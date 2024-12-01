@@ -9,12 +9,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:1-${VARIANT}
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-# Poetry
-ARG POETRY_VERSION="none"
-RUN if [ "${POETRY_VERSION}" != "none" ]; then su vscode -c "umask 0002 && pip3 install poetry==${POETRY_VERSION}"; fi
-
 # UV
-RUN vscode -c "unmaks 0002 && curl -LsSf https://astral.sh/uv/install.sh | sh"
+RUN su vscode -c "umask 0002 && curl -LsSf https://astral.sh/uv/install.sh | sh"
 
 # Nox
 #ARG NOX_VERSION="none"
