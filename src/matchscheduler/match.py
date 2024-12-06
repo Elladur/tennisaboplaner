@@ -12,6 +12,8 @@ Match = Tuple[int, int]
 @profile
 def create_match(player_id1: int, player_id2: int) -> Match:
     # always use smaller int in beginning
+    if player_id1 == player_id2:
+        raise ValueError("Player Ids cannot be the same in a match.")
     if player_id1 < player_id2:
         return (player_id1, player_id2)
     return (player_id2, player_id1)
