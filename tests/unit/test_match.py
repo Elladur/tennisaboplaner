@@ -43,3 +43,17 @@ def test_convert_match_to_string(arg_match, players):
     result = match.convert_match_to_string(arg_match, players)
     assert result.find(players[arg_match[0]].name) != -1
     assert result.find(players[arg_match[1]].name) != -1
+
+
+def test_replace_player_in_match_works_properly():
+    m = match.create_match(1, 2)
+    new_match, swapped = match.replace_player_in_match(m, 2, 3)
+    assert new_match == match.create_match(1, 3)
+    assert swapped
+
+
+def test_replace_player_in_match_doesnt_change_if_player_not_in_match():
+    m = match.create_match(1, 2)
+    new_match, swapped = match.replace_player_in_match(m, 3, 4)
+    assert new_match == m
+    assert not swapped

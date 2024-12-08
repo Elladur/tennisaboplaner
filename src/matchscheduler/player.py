@@ -14,7 +14,7 @@ class Player:
     def to_dict(self) -> dict:
         return {
             "name": self.name,
-            "cannot_play": [str(d) for d in self.cannot_play],
+            "cannot_play": [str(d) for d in sorted(self.cannot_play)],
             "weight": self.weight,
         }
 

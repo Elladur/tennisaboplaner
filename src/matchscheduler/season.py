@@ -8,7 +8,7 @@ from datetime import date, time, timedelta
 from line_profiler import profile
 
 from .match import (Match, can_match_be_added, create_match,
-                    get_players_of_match)
+                    replace_player_in_match)
 from .player import Player
 from .round import get_players_of_round
 
@@ -103,14 +103,10 @@ class Season:
     @profile
     def swap_players_of_existing_matches(self, round_index: int, p: int, q: int) -> None:
         for i, match in enumerate(self.schedule[round_index]):
-            if p in get_players_of_match(match):
-                other_player = match[0] if match[0] != p else match[1]
-                self.schedule[round_index][i] = create_match(q, other_player)
+            self.schedule[round_index][i], swapped = replace_player_in_match(match, p, q)
+            if swapped:
                 continue
-            if q in get_players_of_match(match):
-                other_player = match[0] if match[0] != q else match[1]
-                self.schedule[round_index][i] = create_match(p, other_player)
-                continue
+            self.schedule[round_index][i], swapped = replace_player_in_match(match, q, p)
 
     @profile
     def switch_matches(self, round1: int, match1: int, round2: int, match2: int) -> bool:
@@ -162,7 +158,7 @@ class Season:
             overall_cost,
             calendar_title,
         )
-        instance.schedule = data["schedule"]
+        instance.schedule = [[create_match(y[0], y[1]) for y in x] for x in data["schedule"]]
         return instance
 
     @classmethod

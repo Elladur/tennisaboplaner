@@ -31,3 +31,11 @@ def get_players_of_match(match: Match) -> Match:
 
 def convert_match_to_string(match: Match, players: list[Player]) -> str:
     return f"{players[match[0]]} vs {players[match[1]]}"
+
+
+def replace_player_in_match(match: Match, old_player: int, new_player: int) -> Tuple[Match, bool]:
+    if old_player in get_players_of_match(match):
+        other_player = match[0] if match[0] != old_player else match[1]
+        return create_match(new_player, other_player), True
+    else:
+        return match, False
