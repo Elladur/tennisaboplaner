@@ -114,3 +114,25 @@ def test_swap_players_of_existing_matches_is_symmetric(season_instance):
     season_instance.swap_players_of_existing_matches(0, 1, 2)
     new_round2 = [x for x in season_instance.schedule[0]]
     assert new_round1 == new_round2
+
+
+@pytest.mark.parametrize("round1, match1, round2, match2", [(15, 0, 16, 0)])
+def test_switch_matches_works_for_valid_matches(season_instance, round1, match1, round2, match2):
+    m1 = season_instance.schedule[round1][match1]
+    m2 = season_instance.schedule[round2][match2]
+
+    result = season_instance.switch_matches(round1, match1, round2, match2)
+    assert result
+    assert m1 == season_instance.schedule[round2][match2]
+    assert m2 == season_instance.schedule[round1][match1]
+
+
+@pytest.mark.parametrize("round1, match1, round2, match2", [(1, 0, 0, 0)])
+def test_switch_matches_returns_false_if_not_valid(season_instance, round1, match1, round2, match2):
+    m1 = season_instance.schedule[round1][match1]
+    m2 = season_instance.schedule[round2][match2]
+
+    result = season_instance.switch_matches(round1, match1, round2, match2)
+    assert not result
+    assert m1 == season_instance.schedule[round1][match1]
+    assert m2 == season_instance.schedule[round2][match2]
