@@ -5,6 +5,7 @@ import pytest
 
 from matchscheduler.match import create_match
 from matchscheduler.player import Player
+from matchscheduler.round import get_players_of_round
 from matchscheduler.season import Season
 
 
@@ -29,6 +30,18 @@ def season_instance():
     )
 
 
+@pytest.fixture()
+def season_with_too_less_players():
+    player_list = [
+        Player("Max", ["2024-01-01", "2024-01-08"], 1),
+        Player("Peter", ["2024-01-01"], 1),
+        Player("Ida", [], 1),
+        Player("Moritz", [], 1),
+        Player("Franz", [], 1),
+    ]
+    return Season(player_list, date(2024, 1, 1), date(2024, 1, 29), 2, time(19), time(21), [], 100)
+
+
 def test_init_excludes_dates(player_list):
     excluded_date = ["2024-01-15"]
     season = Season(
@@ -47,6 +60,11 @@ def test_init_generates_valid_schedule(player_list):
     assert season.check_schedule_is_valid()
 
 
+def test_init_generate_schedule_with_too_less_players(season_with_too_less_players):
+    s = season_with_too_less_players
+    assert len(get_players_of_round(s.schedule[0])) == 3
+
+
 def test_change_match_changes_match_if_valid(season_instance):
     old_match = season_instance.schedule[3][1]
     new_match = create_match(3, 4)
@@ -55,6 +73,16 @@ def test_change_match_changes_match_if_valid(season_instance):
     assert result
     assert old_match != new_match
     assert season_instance.schedule[3][1] == new_match
+
+
+def test_change_match_doesnt_change_at_fixed_rounds(season_with_too_less_players):
+    fixed = next(i for i in season_with_too_less_players.fixed_rounds)
+    new_match = create_match(2, 3)
+    old_match = season_with_too_less_players.schedule[fixed][0]
+    result = season_with_too_less_players.change_match(fixed, 0, new_match)
+
+    assert not result
+    assert old_match == season_with_too_less_players.schedule[fixed][0]
 
 
 def test_change_match_doesnt_change_if_invalid(season_instance):
@@ -95,7 +123,8 @@ def test_check_schedule_is_valid_returns_false_for_non_valid_schedule(season_ins
 
 def test_swap_players_of_existing_matches_does_swap(season_instance):
     old_round = [x for x in season_instance.schedule[0]]
-    season_instance.swap_players_of_existing_matches(0, 2, 1)
+    result = season_instance.swap_players_of_existing_matches(0, 2, 1)
+    assert result
     assert season_instance.schedule[0] != old_round
 
 
@@ -114,6 +143,15 @@ def test_swap_players_of_existing_matches_is_symmetric(season_instance):
     season_instance.swap_players_of_existing_matches(0, 1, 2)
     new_round2 = [x for x in season_instance.schedule[0]]
     assert new_round1 == new_round2
+
+
+def test_swap_players_of_existing_matches_doesnt_swap_for_fixed_rounds(
+    season_with_too_less_players,
+):
+    old_round = [x for x in season_with_too_less_players.schedule[0]]
+    result = season_with_too_less_players.swap_players_of_existing_matches(0, 2, 1)
+    assert not result
+    assert season_with_too_less_players.schedule[0] == old_round
 
 
 @pytest.mark.parametrize("round1, match1, round2, match2", [(15, 0, 16, 0)])
@@ -136,3 +174,16 @@ def test_switch_matches_returns_false_if_not_valid(season_instance, round1, matc
     assert not result
     assert m1 == season_instance.schedule[round1][match1]
     assert m2 == season_instance.schedule[round2][match2]
+
+
+@pytest.mark.parametrize("round1, match1, round2, match2", [(1, 0, 0, 0)])
+def test_switch_matches_returns_false_if_fixed(
+    season_with_too_less_players, round1, match1, round2, match2
+):
+    m1 = season_with_too_less_players.schedule[round1][match1]
+    m2 = season_with_too_less_players.schedule[round2][match2]
+
+    result = season_with_too_less_players.switch_matches(round1, match1, round2, match2)
+    assert not result
+    assert m1 == season_with_too_less_players.schedule[round1][match1]
+    assert m2 == season_with_too_less_players.schedule[round2][match2]

@@ -40,6 +40,7 @@ class Season:
         # generate a list of all dates for the season,
         # they start at start and occur weekly until end
         self.dates = []
+        self.fixed_rounds = []
         d = start
         while d <= end:
             if d not in self.excluded_dates:
@@ -51,34 +52,48 @@ class Season:
 
     def _generate_schedule(self) -> list[list[Match]]:
         season = []
-        for d in self.dates:
-            season.append(self._generate_valid_round(d))
+        for i, d in enumerate(self.dates):
+            r, partial = self._generate_valid_round(d)
+            season.append(r)
+            if partial:
+                self.fixed_rounds.append(i)
         return season
 
-    def _generate_valid_round(self, match_date: date) -> list[Match]:
+    def _generate_valid_round(self, match_date: date) -> tuple[list[Match], bool]:
         rounds: list[Match] = []
-        for _ in range(self.num_courts):
-            rounds.append(self._generate_valid_match(match_date, rounds))
-        if len(rounds) == self.num_courts:
-            return rounds
-        raise ValueError()
+        possible_player_idx = [
+            i for i, _ in enumerate(self.players) if match_date not in _.cannot_play
+        ]
+        if len(possible_player_idx) >= self.num_courts * 2:
+            for _ in range(self.num_courts):
+                rounds.append(self._generate_valid_match(match_date, rounds))
+            if len(rounds) == self.num_courts:
+                return rounds, False
+            raise ValueError()
+        # generate partial round
+        round = []
+        random.shuffle(possible_player_idx)
+        while len(possible_player_idx) > 0:
+            if len(possible_player_idx) >= 2:
+                x, y = possible_player_idx.pop(), possible_player_idx.pop()
+                round.append(create_match(x, y))
+            elif len(possible_player_idx) == 1:
+                round.append(create_match(possible_player_idx.pop(), None))
+        return round, True
 
     def _generate_valid_match(self, match_date: date, other_matches: list[Match]) -> Match:
-        indizes = list(range(len(self.players)))
+        indizes = [i for i, _ in enumerate(self.players) if match_date not in _.cannot_play]
         random.shuffle(indizes)
         for p, q in itertools.combinations(indizes, 2):
-            if (
-                match_date not in self.players[p].cannot_play
-                and match_date not in self.players[q].cannot_play
-                and p != q
-            ):
-                match = create_match(p, q)
-                if can_match_be_added(other_matches, match):
-                    return match
+            match = create_match(p, q)
+            if can_match_be_added(other_matches, match):
+                return match
         raise ValueError()
 
     @profile
     def change_match(self, round_index: int, match_index: int, match: Match) -> bool:
+        if round_index in self.fixed_rounds:
+            return False
         old_match = self.schedule[round_index][match_index]
         self.schedule[round_index][match_index] = match
         if self.check_if_round_is_valid(round_index):
@@ -101,15 +116,20 @@ class Season:
         return True
 
     @profile
-    def swap_players_of_existing_matches(self, round_index: int, p: int, q: int) -> None:
+    def swap_players_of_existing_matches(self, round_index: int, p: int, q: int) -> bool:
+        if round_index in self.fixed_rounds:
+            return False
         for i, match in enumerate(self.schedule[round_index]):
             self.schedule[round_index][i], swapped = replace_player_in_match(match, p, q)
             if swapped:
                 continue
             self.schedule[round_index][i], swapped = replace_player_in_match(match, q, p)
+        return True
 
     @profile
     def switch_matches(self, round1: int, match1: int, round2: int, match2: int) -> bool:
+        if round1 in self.fixed_rounds or round2 in self.fixed_rounds:
+            return False
         self.schedule[round1][match1], self.schedule[round2][match2] = (
             self.schedule[round2][match2],
             self.schedule[round1][match1],
