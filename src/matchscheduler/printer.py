@@ -53,7 +53,9 @@ class Printer:
                 for m in matches:
                     if j in m:
                         opponent = m[0] if m[0] != j else m[1]
-                        append_string += str(self.season.players[opponent])
+                        append_string += str(
+                            self.season.players[opponent] if opponent is not None else "..."
+                        )
                         break
                 row.append(append_string)  # type: ignore
             sheet.append(row)  # type: ignore

@@ -24,6 +24,8 @@ class Optimizer:
         current_score = self.scorer.get_score(self.season.schedule, self.season.players)
         # switch with all possible players
         for round_index, round in enumerate(self.season.schedule):
+            if round_index in self.season.fixed_rounds:
+                continue
             self.logger.debug(
                 "Switching all players: Starting new round %s", self.season.dates[round_index]
             )
@@ -53,6 +55,8 @@ class Optimizer:
         current_score = self.scorer.get_score(self.season.schedule, self.season.players)
         # switch players between matches of a round
         for round_index, round in enumerate(self.season.schedule):
+            if round_index in self.season.fixed_rounds:
+                continue
             self.logger.debug(
                 "Switching players inside round:" + "Starting new round %s",
                 self.season.dates[round_index],
@@ -64,7 +68,11 @@ class Optimizer:
                     for p1 in get_players_of_match(round[match1])
                     for p2 in get_players_of_match(round[match2])
                 ]:
-                    self.season.swap_players_of_existing_matches(round_index, player1, player2)
+                    swapped = self.season.swap_players_of_existing_matches(
+                        round_index, player1, player2
+                    )
+                    if not swapped:
+                        continue
                     new_score = self.scorer.get_score(self.season.schedule, self.season.players)
                     if new_score < current_score:
                         swaps += 1
@@ -112,6 +120,8 @@ class Optimizer:
             if (
                 self.season.schedule[round_index1][match_index1]
                 == self.season.schedule[round_index2][match_index2]
+                or round_index1 in self.season.fixed_rounds
+                or round_index2 in self.season.fixed_rounds
             ):
                 continue
             switched = self.season.switch_matches(
