@@ -6,9 +6,6 @@ from datetime import date
 class Player:
     """A player of the match scheduler."""
 
-    name: str
-    cannot_play: set[date]
-
     def __init__(self, name: str, cannot_play: list[str], weight: float = 1):
         self.name = name
         self.cannot_play = {date.fromisoformat(i) for i in cannot_play}
@@ -17,7 +14,7 @@ class Player:
     def to_dict(self) -> dict:
         return {
             "name": self.name,
-            "cannot_play": [str(d) for d in self.cannot_play],
+            "cannot_play": [str(d) for d in sorted(self.cannot_play)],
             "weight": self.weight,
         }
 
