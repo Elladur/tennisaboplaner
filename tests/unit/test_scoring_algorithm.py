@@ -10,8 +10,8 @@ from matchscheduler.scoring_algorithm import ScoringAlgorithm
 @pytest.fixture()
 def player_list():
     return [
-        Player("Max", ["2024-01-01", "2024-01-08"], 1),
-        Player("Peter", ["2024-01-08"], 1),
+        Player("Max", [], 1),
+        Player("Peter", [], 1),
         Player("Ida", [], 2),
     ]
 
@@ -19,72 +19,48 @@ def player_list():
 @pytest.fixture()
 def schedule_with_one_player_not_playing():
     return [
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(0, 1),
-        ],
+        [create_match(0, 1)],
+        [create_match(0, 1)],
+        [create_match(0, 1)],
+        [create_match(0, 1)],
+        [create_match(0, 1)],
+        [create_match(0, 1)],
     ]
 
 
 @pytest.fixture()
 def schedule_even():
     return [
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(2, 1),
-        ],
-        [
-            create_match(2, 0),
-        ],
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(2, 1),
-        ],
-        [
-            create_match(2, 0),
-        ],
+        [create_match(0, 1)],
+        [create_match(2, 1)],
+        [create_match(2, 0)],
+        [create_match(0, 1)],
+        [create_match(2, 1)],
+        [create_match(2, 0)],
     ]
 
 
 @pytest.fixture()
 def schedule_blocks():
     return [
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(0, 1),
-        ],
-        [
-            create_match(2, 0),
-        ],
-        [
-            create_match(2, 0),
-        ],
-        [
-            create_match(2, 1),
-        ],
-        [
-            create_match(2, 1),
-        ],
+        [create_match(0, 1)],
+        [create_match(0, 1)],
+        [create_match(2, 0)],
+        [create_match(2, 0)],
+        [create_match(2, 1)],
+        [create_match(2, 1)],
+    ]
+
+
+@pytest.fixture()
+def balenced_to_weight():
+    return [
+        [create_match(0, 1)],
+        [create_match(2, 0)],
+        [create_match(2, 1)],
+        [create_match(2, 0)],
+        [create_match(2, 1)],
+        [create_match(2, 0)],
     ]
 
 
@@ -135,3 +111,22 @@ def test_schedule_block_is_worse(schedule_blocks, schedule_even, player_list):
     assert uut.get_std_of_pause_between_playing(
         schedule_blocks, player_list
     ) > uut.get_std_of_pause_between_playing(schedule_even, player_list)
+
+
+def test_schedule_even_is_worse_than_balanced(balenced_to_weight, schedule_even, player_list):
+    uut = ScoringAlgorithm()
+    assert uut.get_score(balenced_to_weight, player_list) < uut.get_score(
+        schedule_even, player_list
+    )
+    assert uut.get_std_of_player_times_playing(
+        balenced_to_weight, player_list
+    ) < uut.get_std_of_player_times_playing(schedule_even, player_list)
+    assert uut.get_std_of_all_possible_matches(
+        balenced_to_weight, player_list
+    ) < uut.get_std_of_all_possible_matches(schedule_even, player_list)
+    assert uut.get_std_of_pause_between_matches(
+        balenced_to_weight, player_list
+    ) > uut.get_std_of_pause_between_matches(schedule_even, player_list)
+    assert uut.get_std_of_pause_between_playing(
+        balenced_to_weight, player_list
+    ) < uut.get_std_of_pause_between_playing(schedule_even, player_list)
