@@ -3,42 +3,30 @@
 from typing import Tuple
 
 from line_profiler import profile
+from datetime import date
 
 from .player import Player
 
-Match = Tuple[int, int | None]
+class Match:
+    def __init__(self, player1: Player, player2: Player|None):
+        if player1 == player2:
+            raise ValueError("players need to be different.")
+        self.players = (player1, player2) 
 
+    def __str__(self):
+        names = sorted(p.name for p in self.players)
+        return f"{names[0]} vs {names[1]}"
 
-@profile
-def create_match(player_id1: int, player_id2: int | None) -> Match:
-    # always use smaller int in beginning
-    if player_id2 is None:
-        return (player_id1, None)
-    if player_id1 == player_id2:
-        raise ValueError("Player Ids cannot be the same in a match.")
-    if player_id1 < player_id2:
-        return (player_id1, player_id2)
-    return (player_id2, player_id1)
+    def replace_player(self, old_player: Player, new_player: Player) -> bool:
+        if old_player in self.players:
+            other_player = self.players[0] if self.players[0] != old_player else self.players[1]
+            self.players = (new_player, other_player)
+            return True
+        return False
 
+    def __eq__(self, value: "Match") -> bool:
+        return self.players == value.players or (self.players[0] == value.players[1] and self.players[1] == value.players[0])
 
 @profile
 def can_match_be_added(rounds: list[Match], match: Match) -> bool:
     return not any(p in r for p in match for r in rounds)
-
-
-@profile
-def get_players_of_match(match: Match) -> list[int]:
-    return [x for x in match if x is not None]
-
-
-def convert_match_to_string(match: Match, players: list[Player]) -> str:
-    if match[1] is not None:
-        return f"{players[match[0]]} vs {players[match[1]]}"
-    return f"{players[match[0]]} vs ..."
-
-
-def replace_player_in_match(match: Match, old_player: int, new_player: int) -> Tuple[Match, bool]:
-    if old_player in get_players_of_match(match):
-        other_player = match[0] if match[0] != old_player else match[1]
-        return create_match(new_player, other_player), True
-    return match, False

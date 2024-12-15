@@ -11,6 +11,7 @@ from .match import (Match, can_match_be_added, create_match,
                     replace_player_in_match)
 from .player import Player
 from .round import get_players_of_round
+from .schedule import Schedule
 
 
 class Season:
@@ -22,9 +23,10 @@ class Season:
         start: date,
         end: date,
         number_courts: int,
+        excluded_dates: list[date],
+        schedule: Schedule,
         time_start: time,
         time_end: time,
-        excluded_dates: list[str],
         overall_cost: float = 0,
         calendar_title: str = "Tennisabo",
     ):
@@ -34,62 +36,34 @@ class Season:
         self.time_start = time_start
         self.time_end = time_end
         self.num_courts = number_courts
+        self.excluded_dates = excluded_dates
+        self.schedule = schedule
         self.calendar_title = calendar_title
         self.overall_cost = overall_cost
-        self.excluded_dates = [date.fromisoformat(s) for s in excluded_dates]
-        # generate a list of all dates for the season,
-        # they start at start and occur weekly until end
-        self.dates = []
-        self.fixed_rounds = []
-        d = start
-        while d <= end:
-            if d not in self.excluded_dates:
-                self.dates.append(d)
-            d += timedelta(days=7)
-
-        self.schedule = self._generate_schedule()
         self.logger = logging.getLogger(__name__)
 
-    def _generate_schedule(self) -> list[list[Match]]:
-        season = []
-        for i, d in enumerate(self.dates):
-            r, partial = self._generate_valid_round(d)
-            season.append(r)
-            if partial:
-                self.fixed_rounds.append(i)
-        return season
+    @classmethod
+    def create(cls,
+        players: list[Player],
+        start: date,
+        end: date,
+        number_courts: int,
+        excluded_dates: list[str],
+        time_start: time,
+        time_end: time,
+        overall_cost: float = 0,
+        calendar_title: str = "Tennisabo",
+    ) -> "Season":
+        days = []
+        d = start
+        while d <= end:
+            if d not in excluded_dates:
+                days.append(d)
+            d = d + timedelta(days=7)
+        schedule = Schedule.create(players, days, number_courts)
+        return cls(players, start, end, number_courts, excluded_dates, schedule, time_start, time_end, overall_cost, calendar_title)
 
-    def _generate_valid_round(self, match_date: date) -> tuple[list[Match], bool]:
-        rounds: list[Match] = []
-        possible_player_idx = [
-            i for i, _ in enumerate(self.players) if match_date not in _.cannot_play
-        ]
-        if len(possible_player_idx) >= self.num_courts * 2:
-            for _ in range(self.num_courts):
-                rounds.append(self._generate_valid_match(match_date, rounds))
-            if len(rounds) == self.num_courts:
-                return rounds, False
-            raise ValueError()
-        # generate partial round
-        round = []
-        random.shuffle(possible_player_idx)
-        while len(possible_player_idx) > 0:
-            if len(possible_player_idx) >= 2:
-                x, y = possible_player_idx.pop(), possible_player_idx.pop()
-                round.append(create_match(x, y))
-            elif len(possible_player_idx) == 1:
-                round.append(create_match(possible_player_idx.pop(), None))
-        return round, True
-
-    def _generate_valid_match(self, match_date: date, other_matches: list[Match]) -> Match:
-        indizes = [i for i, _ in enumerate(self.players) if match_date not in _.cannot_play]
-        random.shuffle(indizes)
-        for p, q in itertools.combinations(indizes, 2):
-            match = create_match(p, q)
-            if can_match_be_added(other_matches, match):
-                return match
-        raise ValueError()
-
+ ###### neeeds to be adapted #####
     @profile
     def change_match(self, round_index: int, match_index: int, match: Match) -> bool:
         if round_index in self.fixed_rounds:
