@@ -15,10 +15,14 @@ def test_performance(request):
         o = Optimizer(s)
 
         start_time = time.time()
-        for _ in range(5):
+        for _ in range(50):
             o.optimize_schedule()
             o.season._generate_schedule()
         end_time = time.time()
 
         elapsed_time = end_time - start_time
         assert elapsed_time <= 13  # 9.483287572860718
+        # running test without debug over vs ui
+        # first try: 22.344756364822388
+        # second try: 22.771101236343384
+        # third try: 23.330134868621826
