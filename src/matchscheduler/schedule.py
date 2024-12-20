@@ -38,7 +38,7 @@ class Schedule:
         return self.rounds[round_index].replace_match(match_index, match)
 
     def swap_players_of_existing_matches(self, round_index: int, p: Player, q: Player) -> bool:
-        return self.rounds[round_index].swap_players_of_existing_matches(p, q)
+        return self.rounds[round_index].swap_players(p, q)
 
     @profile
     def switch_matches(self, round1: int, match1: int, round2: int, match2: int) -> bool:

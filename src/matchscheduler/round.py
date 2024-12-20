@@ -18,8 +18,7 @@ class Round:
         self.is_partial = len(matches) < number_of_courts
         self.day = day
 
-    @profile
-    def get_players_of_round(self) -> Generator[Player, None, None]:
+    def get_players(self) -> Generator[Player, None, None]:
         return (p for m in self.matches for p in m.get_players())
 
     def get_players_of_round_except_match(self, match_index: int) -> Generator[Player, None, None]:
@@ -30,15 +29,15 @@ class Round:
             return False
         if any(self.day in p.cannot_play for p in new_match.get_players()):
             return False
-        other_players = self.get_players_of_round_except_match(match_index)
-        if any(p in other_players for p in new_match.get_players()):
+        player_of_other_matches = list(self.get_players_of_round_except_match(match_index))
+        if any(p in player_of_other_matches for p in new_match.get_players()):
             return False
         self.matches[match_index] = new_match
         return True
 
-    def swap_players_of_existing_matches(self, p: Player, q: Player) -> bool:
-        p_match = next(filter(lambda x: p in x.get_players(), self.matches))
-        q_match = next(filter(lambda x: q in x.get_players(), self.matches))
+    def swap_players(self, p: Player, q: Player) -> bool:
+        p_match = next(filter(lambda x: p in x.get_players(), self.matches), None)
+        q_match = next(filter(lambda x: q in x.get_players(), self.matches), None)
         if p_match is None or q_match is None:
             return False
         p_match.replace_player(p, q)
