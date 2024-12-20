@@ -1,32 +1,53 @@
 """Match class and factory for generating valid matches."""
 
-from typing import Tuple
+from typing import Generator
 
-from line_profiler import profile
-from datetime import date
 
 from .player import Player
 
+
 class Match:
-    def __init__(self, player1: Player, player2: Player|None):
+    def __init__(self, player1: Player, player2: Player | None):
         if player1 == player2:
             raise ValueError("players need to be different.")
-        self.players = (player1, player2) 
+        if player2 is None:
+            self.player1 = player1
+            self.player2 = None
+        else:
+            self.player1, self.player2 = sorted((player1, player2), key=lambda x: x.name)
 
     def __str__(self):
-        names = sorted(p.name for p in self.players)
-        return f"{names[0]} vs {names[1]}"
+        return f"{self.player1.name} vs {self.player2.name if self.player2 is not None else "..."}"
+
+    def get_players(self) -> Generator[Player]:
+        yield self.player1
+        if self.player2 is not None:
+            yield self.player2
 
     def replace_player(self, old_player: Player, new_player: Player) -> bool:
-        if old_player in self.players:
-            other_player = self.players[0] if self.players[0] != old_player else self.players[1]
-            self.players = (new_player, other_player)
+        if self.player1 == old_player and self.player2 != new_player:
+            self.player1 = new_player
+            return True
+        if self.player2 == old_player and self.player1 != new_player:
+            self.player2 = new_player
             return True
         return False
 
-    def __eq__(self, value: "Match") -> bool:
-        return self.players == value.players or (self.players[0] == value.players[1] and self.players[1] == value.players[0])
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, Match):
+            return self.player1 == value.player1 and self.player2 == value.player2
+        return False
 
-@profile
+    def to_dict(self) -> tuple[str, str|None]:
+        return (self.player1.name, self.player2.name if self.player2 is not None else None)
+
+    @classmethod
+    def from_dict(cls, match: tuple[str, str], players: list[Player]) -> "Match":
+        player1_name, player2_name = match
+        player1 = next(filter(lambda x: x.name == player1_name, players))
+        player2 = next(filter(lambda x: x.name == player2_name, players))
+        return cls(player1, player2)
+
+
 def can_match_be_added(rounds: list[Match], match: Match) -> bool:
-    return not any(p in r for p in match for r in rounds)
+    return not any(p in r.get_players() for p in match.get_players() for r in rounds)
