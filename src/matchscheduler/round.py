@@ -19,10 +19,10 @@ class Round:
         self.day = day
 
     @profile
-    def get_players_of_round(self) -> Generator[Player]:
+    def get_players_of_round(self) -> Generator[Player, None, None]:
         return (p for m in self.matches for p in m.get_players())
 
-    def get_players_of_round_except_match(self, match_index: int) -> Generator[Player]:
+    def get_players_of_round_except_match(self, match_index: int) -> Generator[Player, None, None]:
         return (p for i, m in enumerate(self.matches) for p in m.get_players() if i != match_index)
 
     def replace_match(self, match_index: int, new_match: Match) -> bool:
