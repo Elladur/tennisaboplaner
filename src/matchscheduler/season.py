@@ -3,7 +3,6 @@
 import logging
 from datetime import date, time, timedelta
 
-
 from .player import Player
 from .schedule import Schedule
 

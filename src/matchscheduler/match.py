@@ -2,7 +2,6 @@
 
 from typing import Generator
 
-
 from .player import Player
 
 
@@ -17,7 +16,8 @@ class Match:
             self.player1, self.player2 = sorted((player1, player2), key=lambda x: x.name)
 
     def __str__(self):
-        return f"{self.player1.name} vs {self.player2.name if self.player2 is not None else "..."}"
+        second_name = self.player2.name if self.player2 is not None else "..."
+        return f"{self.player1.name} vs {second_name}"
 
     def get_players(self) -> Generator[Player, None, None]:
         yield self.player1
@@ -42,7 +42,7 @@ class Match:
             return self.player1 == value.player1 and self.player2 == value.player2
         return False
 
-    def to_dict(self) -> tuple[str, str|None]:
+    def to_dict(self) -> tuple[str, str | None]:
         return (self.player1.name, self.player2.name if self.player2 is not None else None)
 
     @classmethod

@@ -61,7 +61,7 @@ class Schedule:
 
     @classmethod
     def from_dict(cls, data: dict, number_of_courts: int, players: list[Player]) -> "Schedule":
-        rounds = [Round.from_dict(data["rounds"], number_of_courts, players)]
+        rounds = [Round.from_dict(r, number_of_courts, players) for r in data["rounds"]]
         return cls(rounds)
 
     @classmethod

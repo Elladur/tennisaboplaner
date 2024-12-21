@@ -2,8 +2,8 @@
 
 import itertools
 from datetime import date
-from typing import Generator
 from random import shuffle
+from typing import Generator
 
 from line_profiler import profile
 
@@ -66,7 +66,9 @@ class Round:
                 if len(matches) == number_of_courts:
                     return cls(matches, day, number_of_courts)
         # partial round ...
-        missing_player = [p for p in possible_players if not any(p in m.get_players() for m in matches)]
+        missing_player = [
+            p for p in possible_players if not any(p in m.get_players() for m in matches)
+        ]
         if len(missing_player) == 1:
             matches.append(Match(missing_player[0], None))
             return cls(matches, day, number_of_courts)
