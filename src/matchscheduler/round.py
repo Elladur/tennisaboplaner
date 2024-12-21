@@ -4,12 +4,13 @@ import itertools
 from datetime import date
 from random import shuffle
 from typing import Generator
+from line_profiler import profile
 
 from .match import Match, can_match_be_added
 from .player import Player
 
 
-class Round:
+class Round: 
     def __init__(self, matches: list[Match], day: date, number_of_courts: int):
         if any(day in p.cannot_play for m in matches for p in m.get_players()):
             raise ValueError("not all players can play on this date")
@@ -17,12 +18,15 @@ class Round:
         self.is_partial = len([p for p in self.get_players()]) != 2 * number_of_courts
         self.day = day
 
+    @profile
     def get_players(self) -> Generator[Player, None, None]:
         return (p for m in self.matches for p in m.get_players())
 
+    @profile
     def get_players_of_round_except_match(self, match_index: int) -> Generator[Player, None, None]:
         return (p for i, m in enumerate(self.matches) for p in m.get_players() if i != match_index)
 
+    @profile
     def replace_match(self, match_index: int, new_match: Match) -> bool:
         if self.is_partial:
             return False
@@ -34,6 +38,7 @@ class Round:
         self.matches[match_index] = new_match
         return True
 
+    @profile
     def swap_players(self, p: Player, q: Player) -> bool:
         p_match = next(filter(lambda x: p in x.get_players(), self.matches), None)
         q_match = next(filter(lambda x: q in x.get_players(), self.matches), None)

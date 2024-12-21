@@ -2,6 +2,7 @@
 
 from typing import Generator
 
+from line_profiler import profile
 from .player import Player
 
 
@@ -22,11 +23,13 @@ class Match:
     def __hash__(self):
         return hash(str(self))
 
+    @profile
     def get_players(self) -> Generator[Player, None, None]:
         yield self.player1
         if self.player2 is not None:
             yield self.player2
 
+    @profile
     def replace_player(self, old_player: Player, new_player: Player) -> bool:
         if self.player1 == old_player and self.player2 != new_player:
             self.player1 = new_player
@@ -59,5 +62,6 @@ class Match:
         return cls(player1, player2)
 
 
+@profile
 def can_match_be_added(rounds: list[Match], match: Match) -> bool:
     return not any(p in r.get_players() for p in match.get_players() for r in rounds)

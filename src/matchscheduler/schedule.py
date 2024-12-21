@@ -21,7 +21,7 @@ class Schedule:
             (round_index, match_index)
             for round_index, round in enumerate(self.rounds)
             for match_index, match in enumerate(round.matches)
-            if player in match.get_players()
+            if player == match.player1 or player == match.player2
         ]
 
     @profile
@@ -37,6 +37,7 @@ class Schedule:
     def change_match(self, round_index: int, match_index: int, match: Match) -> bool:
         return self.rounds[round_index].replace_match(match_index, match)
 
+    @profile
     def swap_players_of_existing_matches(self, round_index: int, p: Player, q: Player) -> bool:
         return self.rounds[round_index].swap_players(p, q)
 
