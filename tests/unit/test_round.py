@@ -118,6 +118,10 @@ def test_swap_players_doesnt_change_if_not_both_present(example_round, players):
     result = example_round.swap_players(players[0], players[4])
     assert not result
 
+def test_swap_players_doesnt_do_anything_if_same_player(example_round, players):
+    result = example_round.swap_players(players[0], players[0])
+    assert not result
+
 
 def test_to_dict(example_round):
     result = example_round.to_dict()

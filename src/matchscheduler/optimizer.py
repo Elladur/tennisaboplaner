@@ -6,7 +6,9 @@ from line_profiler import profile
 
 from matchscheduler.season import Season
 
-from .match import create_match, get_players_of_match
+from .match import Match
+from .round import Round
+from .schedule import Schedule
 from .scoring_algorithm import ScoringAlgorithm
 
 
@@ -23,19 +25,19 @@ class Optimizer:
 
         current_score = self.scorer.get_score(self.season.schedule, self.season.players)
         # switch with all possible players
-        for round_index, round in enumerate(self.season.schedule):
-            if round_index in self.season.fixed_rounds:
+        for round_index, round in enumerate(self.season.schedule.rounds):
+            if round.is_partial:
                 continue
             self.logger.debug(
-                "Switching all players: Starting new round %s", self.season.dates[round_index]
+                "Switching all players: Starting new round %s", round.day
             )
 
-            for match_index, current_match in enumerate(round):
-                for p, q in combinations(range(len(self.season.players)), 2):
-                    possible_match = create_match(p, q)
+            for match_index, current_match in enumerate(round.matches):
+                for p, q in combinations(self.season.players, 2):
+                    possible_match = Match(p, q)
                     if possible_match == current_match:
                         continue
-                    changed = self.season.change_match(round_index, match_index, possible_match)
+                    changed = self.season.schedule.change_match(round_index, match_index, possible_match)
                     if not changed:
                         continue
                     new_score = self.scorer.get_score(self.season.schedule, self.season.players)
@@ -50,42 +52,37 @@ class Optimizer:
                         current_match = possible_match
                     else:
                         # swap back to original match
-                        self.season.change_match(round_index, match_index, current_match)
+                        self.season.schedule.change_match(round_index, match_index, current_match)
 
         current_score = self.scorer.get_score(self.season.schedule, self.season.players)
         # switch players between matches of a round
-        for round_index, round in enumerate(self.season.schedule):
-            if round_index in self.season.fixed_rounds:
+        for round_index, round in enumerate(self.season.schedule.rounds):
+            if round.is_partial:
                 continue
             self.logger.debug(
                 "Switching players inside round:" + "Starting new round %s",
-                self.season.dates[round_index],
+                round.day
             )
             # get all combinations of match indexes
-            for match1, match2 in combinations(range(self.season.num_courts), 2):
-                for player1, player2 in [
-                    (p1, p2)
-                    for p1 in get_players_of_match(round[match1])
-                    for p2 in get_players_of_match(round[match2])
-                ]:
-                    swapped = self.season.swap_players_of_existing_matches(
-                        round_index, player1, player2
+            for p, q in combinations(round.get_players(), 2):
+                swapped = self.season.schedule.swap_players_of_existing_matches(
+                    round_index, p, q
+                )
+                if not swapped:
+                    continue
+                new_score = self.scorer.get_score(self.season.schedule, self.season.players)
+                if new_score < current_score:
+                    swaps += 1
+                    self.logger.debug(
+                        "Switched players insied existing round "
+                        + "- old score = %.2f - new score = %.2f",
+                        current_score,
+                        new_score,
                     )
-                    if not swapped:
-                        continue
-                    new_score = self.scorer.get_score(self.season.schedule, self.season.players)
-                    if new_score < current_score:
-                        swaps += 1
-                        self.logger.debug(
-                            "Switched players insied existing round "
-                            + "- old score = %.2f - new score = %.2f",
-                            current_score,
-                            new_score,
-                        )
-                        current_score = new_score
-                        break
-                    # swap back to original matches
-                    self.season.swap_players_of_existing_matches(round_index, player1, player2)
+                    current_score = new_score
+                    break
+                # swap back to original matches
+                self.season.schedule.swap_players_of_existing_matches(round_index, p, q)
 
         return swaps
 

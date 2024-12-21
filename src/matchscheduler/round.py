@@ -38,7 +38,7 @@ class Round:
     def swap_players(self, p: Player, q: Player) -> bool:
         p_match = next(filter(lambda x: p in x.get_players(), self.matches), None)
         q_match = next(filter(lambda x: q in x.get_players(), self.matches), None)
-        if p_match is None or q_match is None:
+        if p_match is None or q_match is None or p_match == q_match:
             return False
         p_match.replace_player(p, q)
         q_match.replace_player(q, p)
