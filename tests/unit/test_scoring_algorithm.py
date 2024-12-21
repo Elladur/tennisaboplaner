@@ -1,14 +1,17 @@
+from datetime import date
 from unittest.mock import Mock
 
 import pytest
 
-from matchscheduler.match import create_match
+from matchscheduler.match import Match
 from matchscheduler.player import Player
+from matchscheduler.round import Round
+from matchscheduler.schedule import Schedule
 from matchscheduler.scoring_algorithm import ScoringAlgorithm
 
 
 @pytest.fixture()
-def player_list():
+def players():
     return [
         Player("Max", [], 1),
         Player("Peter", [], 1),
@@ -17,51 +20,59 @@ def player_list():
 
 
 @pytest.fixture()
-def schedule_with_one_player_not_playing():
-    return [
-        [create_match(0, 1)],
-        [create_match(0, 1)],
-        [create_match(0, 1)],
-        [create_match(0, 1)],
-        [create_match(0, 1)],
-        [create_match(0, 1)],
-    ]
+def schedule_with_one_player_not_playing(players):
+    return Schedule(
+        [
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+        ]
+    )
 
 
 @pytest.fixture()
-def schedule_even():
-    return [
-        [create_match(0, 1)],
-        [create_match(2, 1)],
-        [create_match(2, 0)],
-        [create_match(0, 1)],
-        [create_match(2, 1)],
-        [create_match(2, 0)],
-    ]
+def schedule_even(players):
+    return Schedule(
+        [
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[0])], date(2024, 1, 1), 1),
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[0])], date(2024, 1, 1), 1),
+        ]
+    )
 
 
 @pytest.fixture()
-def schedule_blocks():
-    return [
-        [create_match(0, 1)],
-        [create_match(0, 1)],
-        [create_match(2, 0)],
-        [create_match(2, 0)],
-        [create_match(2, 1)],
-        [create_match(2, 1)],
-    ]
+def schedule_blocks(players):
+    return Schedule(
+        [
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[0])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[0])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[1])], date(2024, 1, 1), 1),
+        ]
+    )
 
 
 @pytest.fixture()
-def balenced_to_weight():
-    return [
-        [create_match(0, 1)],
-        [create_match(2, 0)],
-        [create_match(2, 1)],
-        [create_match(2, 0)],
-        [create_match(2, 1)],
-        [create_match(2, 0)],
-    ]
+def balenced_to_weight(players):
+    return Schedule(
+        [
+            Round([Match(players[0], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[0])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[0])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[1])], date(2024, 1, 1), 1),
+            Round([Match(players[2], players[0])], date(2024, 1, 1), 1),
+        ]
+    )
 
 
 def test_get_score():
@@ -80,53 +91,51 @@ def test_get_score():
 
 
 def test_schedule_with_one_player_not_playing_is_worse(
-    schedule_with_one_player_not_playing, schedule_even, player_list
+    schedule_with_one_player_not_playing, schedule_even, players
 ):
     uut = ScoringAlgorithm()
     assert uut.get_std_of_player_times_playing(
-        schedule_with_one_player_not_playing, player_list
-    ) > uut.get_std_of_player_times_playing(schedule_even, player_list)
+        schedule_with_one_player_not_playing, players
+    ) > uut.get_std_of_player_times_playing(schedule_even, players)
     assert uut.get_std_of_all_possible_matches(
-        schedule_with_one_player_not_playing, player_list
-    ) > uut.get_std_of_all_possible_matches(schedule_even, player_list)
+        schedule_with_one_player_not_playing, players
+    ) > uut.get_std_of_all_possible_matches(schedule_even, players)
     assert uut.get_std_of_pause_between_matches(
-        schedule_with_one_player_not_playing, player_list
-    ) > uut.get_std_of_pause_between_matches(schedule_even, player_list)
+        schedule_with_one_player_not_playing, players
+    ) > uut.get_std_of_pause_between_matches(schedule_even, players)
     assert uut.get_std_of_pause_between_playing(
-        schedule_with_one_player_not_playing, player_list
-    ) > uut.get_std_of_pause_between_playing(schedule_even, player_list)
+        schedule_with_one_player_not_playing, players
+    ) > uut.get_std_of_pause_between_playing(schedule_even, players)
 
 
-def test_schedule_block_is_worse(schedule_blocks, schedule_even, player_list):
+def test_schedule_block_is_worse(schedule_blocks, schedule_even, players):
     uut = ScoringAlgorithm()
     assert uut.get_std_of_player_times_playing(
-        schedule_blocks, player_list
-    ) == uut.get_std_of_player_times_playing(schedule_even, player_list)
+        schedule_blocks, players
+    ) == uut.get_std_of_player_times_playing(schedule_even, players)
     assert uut.get_std_of_all_possible_matches(
-        schedule_blocks, player_list
-    ) == uut.get_std_of_all_possible_matches(schedule_even, player_list)
+        schedule_blocks, players
+    ) == uut.get_std_of_all_possible_matches(schedule_even, players)
     assert uut.get_std_of_pause_between_matches(
-        schedule_blocks, player_list
-    ) > uut.get_std_of_pause_between_matches(schedule_even, player_list)
+        schedule_blocks, players
+    ) > uut.get_std_of_pause_between_matches(schedule_even, players)
     assert uut.get_std_of_pause_between_playing(
-        schedule_blocks, player_list
-    ) > uut.get_std_of_pause_between_playing(schedule_even, player_list)
+        schedule_blocks, players
+    ) > uut.get_std_of_pause_between_playing(schedule_even, players)
 
 
-def test_schedule_even_is_worse_than_balanced(balenced_to_weight, schedule_even, player_list):
+def test_schedule_even_is_worse_than_balanced(balenced_to_weight, schedule_even, players):
     uut = ScoringAlgorithm()
-    assert uut.get_score(balenced_to_weight, player_list) < uut.get_score(
-        schedule_even, player_list
-    )
+    assert uut.get_score(balenced_to_weight, players) < uut.get_score(schedule_even, players)
     assert uut.get_std_of_player_times_playing(
-        balenced_to_weight, player_list
-    ) < uut.get_std_of_player_times_playing(schedule_even, player_list)
+        balenced_to_weight, players
+    ) < uut.get_std_of_player_times_playing(schedule_even, players)
     assert uut.get_std_of_all_possible_matches(
-        balenced_to_weight, player_list
-    ) < uut.get_std_of_all_possible_matches(schedule_even, player_list)
+        balenced_to_weight, players
+    ) < uut.get_std_of_all_possible_matches(schedule_even, players)
     assert uut.get_std_of_pause_between_matches(
-        balenced_to_weight, player_list
-    ) > uut.get_std_of_pause_between_matches(schedule_even, player_list)
+        balenced_to_weight, players
+    ) > uut.get_std_of_pause_between_matches(schedule_even, players)
     assert uut.get_std_of_pause_between_playing(
-        balenced_to_weight, player_list
-    ) < uut.get_std_of_pause_between_playing(schedule_even, player_list)
+        balenced_to_weight, players
+    ) < uut.get_std_of_pause_between_playing(schedule_even, players)

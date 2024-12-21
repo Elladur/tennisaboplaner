@@ -5,7 +5,6 @@ from datetime import date
 from random import shuffle
 from typing import Generator
 
-from line_profiler import profile
 
 from .match import Match, can_match_be_added
 from .player import Player

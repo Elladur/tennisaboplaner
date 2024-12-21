@@ -6,7 +6,6 @@ import pytest
 
 from matchscheduler.match import Match
 from matchscheduler.player import Player
-from matchscheduler.round import Round
 from matchscheduler.schedule import Schedule
 
 

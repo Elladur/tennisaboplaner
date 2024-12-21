@@ -19,6 +19,9 @@ class Match:
         second_name = self.player2.name if self.player2 is not None else "..."
         return f"{self.player1.name} vs {second_name}"
 
+    def __hash__(self):
+        return hash(str(self))
+
     def get_players(self) -> Generator[Player, None, None]:
         yield self.player1
         if self.player2 is not None:
