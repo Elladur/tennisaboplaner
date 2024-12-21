@@ -7,8 +7,6 @@ from line_profiler import profile
 from matchscheduler.season import Season
 
 from .match import Match
-from .round import Round
-from .schedule import Schedule
 from .scoring_algorithm import ScoringAlgorithm
 
 
@@ -28,16 +26,16 @@ class Optimizer:
         for round_index, round in enumerate(self.season.schedule.rounds):
             if round.is_partial:
                 continue
-            self.logger.debug(
-                "Switching all players: Starting new round %s", round.day
-            )
+            self.logger.debug("Switching all players: Starting new round %s", round.day)
 
             for match_index, current_match in enumerate(round.matches):
                 for p, q in combinations(self.season.players, 2):
                     possible_match = Match(p, q)
                     if possible_match == current_match:
                         continue
-                    changed = self.season.schedule.change_match(round_index, match_index, possible_match)
+                    changed = self.season.schedule.change_match(
+                        round_index, match_index, possible_match
+                    )
                     if not changed:
                         continue
                     new_score = self.scorer.get_score(self.season.schedule, self.season.players)
@@ -60,14 +58,11 @@ class Optimizer:
             if round.is_partial:
                 continue
             self.logger.debug(
-                "Switching players inside round:" + "Starting new round %s",
-                round.day
+                "Switching players inside round:" + "Starting new round %s", round.day
             )
             # get all combinations of match indexes
             for p, q in combinations(round.get_players(), 2):
-                swapped = self.season.schedule.swap_players_of_existing_matches(
-                    round_index, p, q
-                )
+                swapped = self.season.schedule.swap_players_of_existing_matches(round_index, p, q)
                 if not swapped:
                     continue
                 new_score = self.scorer.get_score(self.season.schedule, self.season.players)
@@ -93,7 +88,9 @@ class Optimizer:
         # it gives an additional random factor to the algorithmus
 
         indizes = [
-            (i, j) for i in range(len(self.season.schedule)) for j in range(self.season.num_courts)
+            (i, j)
+            for i in range(len(self.season.schedule.rounds))
+            for j in range(self.season.num_courts)
         ]
 
         # shuffle index to have a random factor
@@ -114,14 +111,16 @@ class Optimizer:
                 round_index2,
                 match_index2,
             )
+            round1 = self.season.schedule.rounds[round_index1]
+            round2 = self.season.schedule.rounds[round_index2]
             if (
-                self.season.schedule[round_index1][match_index1]
-                == self.season.schedule[round_index2][match_index2]
-                or round_index1 in self.season.fixed_rounds
-                or round_index2 in self.season.fixed_rounds
+                round1.is_partial
+                or round2.is_partial
+                or self.season.schedule.rounds[round_index1].matches[match_index1]
+                == self.season.schedule.rounds[round_index2].matches[match_index2]
             ):
                 continue
-            switched = self.season.switch_matches(
+            switched = self.season.schedule.switch_matches(
                 round_index1, match_index1, round_index2, match_index2
             )
             if not switched:
@@ -137,7 +136,9 @@ class Optimizer:
                 current_score = new_score
             else:
                 # swap back to original matches
-                self.season.switch_matches(round_index1, match_index1, round_index2, match_index2)
+                self.season.schedule.switch_matches(
+                    round_index1, match_index1, round_index2, match_index2
+                )
 
         return swaps
 

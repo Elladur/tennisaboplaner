@@ -1,9 +1,11 @@
 import json
 import time
 from pathlib import Path
+from datetime import timedelta
 
 from matchscheduler.optimizer import Optimizer
 from matchscheduler.season import Season
+from matchscheduler.schedule import Schedule
 
 
 def test_performance(request):
@@ -14,10 +16,17 @@ def test_performance(request):
         s = Season.create_from_settings(data)
         o = Optimizer(s)
 
+        days = []
+        d = s.start
+        while d <= s.end:
+            if d not in s.excluded_dates:
+                days.append(d)
+            d = d + timedelta(days=7)
+
         start_time = time.time()
         for _ in range(50):
             o.optimize_schedule()
-            o.season._generate_schedule()
+            o.season.schedule = Schedule.create(s.players, days, s.num_courts)
         end_time = time.time()
 
         elapsed_time = end_time - start_time

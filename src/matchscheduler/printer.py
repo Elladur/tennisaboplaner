@@ -5,8 +5,7 @@ from pathlib import Path
 from icalendar import Calendar, Event
 from openpyxl import Workbook
 
-from .match import convert_match_to_string, create_match
-from .schedule import get_match_indizes_of_player
+from .match import Match
 from .season import Season
 
 
@@ -22,40 +21,37 @@ class Printer:
         self.export_calendar(folderpath)
 
     def export_excel(self, folderpath: Path) -> None:
+        all_dates = sorted(
+            [r.day for r in self.season.schedule.rounds] + self.season.excluded_dates
+        )
         excel = Workbook()
         sheet = excel.active
         sheet.title = "Schedule"  # type: ignore
         sheet.append(  # type: ignore
             ["Date"] + [f"Match {i+1}" for i in range(self.season.num_courts)]
         )
-        for d in sorted(self.season.dates + self.season.excluded_dates):
+        for d in all_dates:
             if d in self.season.excluded_dates:
                 sheet.append([str(d)])  # type: ignore
             else:
-                i = self.season.dates.index(d)
+                round = next(filter(lambda r: r.day == d, self.season.schedule.rounds))
                 sheet.append(  # type: ignore
-                    [str(self.season.dates[i])]
-                    + [
-                        convert_match_to_string(m, self.season.players)
-                        for m in self.season.schedule[i]
-                    ]
+                    [str(round.day)] + [str(m) for m in round.matches]
                 )  # type: ignore
 
         # add an additional sheet to excel workbook with columns for each player
         # and their match partners
         sheet = excel.create_sheet("Partner by Player")  # type: ignore
         sheet.append(["Date"] + [str(p) for p in self.season.players])  # type: ignore
-        for i, _ in enumerate(self.season.dates):
-            row = [str(self.season.dates[i])]
-            matches = self.season.schedule[i]
-            for j, _ in enumerate(self.season.players):
+        for round in self.season.schedule.rounds:
+            row = [str(round.day)]
+            matches = round.matches
+            for player in self.season.players:
                 append_string = ""
                 for m in matches:
-                    if j in m:
-                        opponent = m[0] if m[0] != j else m[1]
-                        append_string += str(
-                            self.season.players[opponent] if opponent is not None else "..."
-                        )
+                    if player in m.get_players():
+                        opponent = m.player1 if m.player1 != player else m.player2
+                        append_string += str(opponent.name if opponent is not None else "...")
                         break
                 row.append(append_string)  # type: ignore
             sheet.append(row)  # type: ignore
@@ -63,22 +59,16 @@ class Printer:
         # add an additional sheet to excel workbook with columns for each possible match
         # and each row marks with an x if the match is played on that day
         sheet = excel.create_sheet("Matches Overview")  # type: ignore
-        player_combinations = list(
-            (p, q) for p, q in itertools.combinations(range(len(self.season.players)), 2)
+        possible_matches = list(
+            Match(p, q) for p, q in itertools.combinations(self.season.players, 2)
         )
-        sheet.append(  # type: ignore
-            ["Date"]
-            + [
-                convert_match_to_string(create_match(p, q), self.season.players)
-                for p, q in player_combinations
-            ]
-        )
-        for i, round in enumerate(self.season.schedule):
-            row = [str(self.season.dates[i])]
-            for player1, player2 in player_combinations:
+        sheet.append(["Date"] + [str(m) for m in possible_matches])  # type: ignore
+        for round in self.season.schedule.rounds:
+            row = [str(round.day)]
+            for match in possible_matches:
                 append_string = ""
-                for m in round:
-                    if m == create_match(player1, player2):
+                for m in round.matches:
+                    if m == match:
                         append_string = "x"
                         break
                 row.append(append_string)  # type: ignore
@@ -87,20 +77,22 @@ class Printer:
         sheet = excel.create_sheet("Costs")
         sheet.append([""] + [str(p) for p in self.season.players])  # type: ignore
         cost_per_match = (
-            self.season.overall_cost / (len(self.season.schedule) * self.season.num_courts) / 2
+            self.season.overall_cost
+            / (len(self.season.schedule.rounds) * self.season.num_courts)
+            / 2
         )
         sheet.append(  # type: ignore
             ["Matches"]
             + [
-                len(get_match_indizes_of_player(self.season.schedule, p))
-                for p in range(len(self.season.players))
+                len(self.season.schedule.get_match_indizes_of_player(p))
+                for p in self.season.players
             ]
         )
         sheet.append(  # type: ignore
             ["Cost"]
             + [
-                len(get_match_indizes_of_player(self.season.schedule, p)) * cost_per_match
-                for p in range(len(self.season.players))
+                len(self.season.schedule.get_match_indizes_of_player(p)) * cost_per_match
+                for p in self.season.players
             ]
         )
 
@@ -116,22 +108,17 @@ class Printer:
             cal.add("X-WR-CALNAME", f"MatchScheduler - {p.name}")
             cal.add("X-WR-TIMEZONE", "Europe/Vienna")
             cal.add("X-WR-CALDESC", f"MatchScheduler - {p.name}")
-            for round_index, match_index in get_match_indizes_of_player(self.season.schedule, i):
+            for round_index, match_index in self.season.schedule.get_match_indizes_of_player(p):
+                round = self.season.schedule.rounds[round_index]
+                match = round.matches[match_index]
                 event = Event()
                 event.add("summary", self.season.calendar_title)
-                event.add(
-                    "description",
-                    convert_match_to_string(
-                        self.season.schedule[round_index][match_index], self.season.players
-                    ),
-                )
+                event.add("description", str(match))
                 event.add(
                     "dtstart",
-                    datetime.combine(self.season.dates[round_index], self.season.time_start),
+                    datetime.combine(round.day, self.season.time_start),
                 )
-                event.add(
-                    "dtend", datetime.combine(self.season.dates[round_index], self.season.time_end)
-                )
+                event.add("dtend", datetime.combine(round.day, self.season.time_end))
                 cal.add_component(event)
             with open(folderpath / f"{p.name}.ics", "wb") as f:
                 f.write(cal.to_ical())
