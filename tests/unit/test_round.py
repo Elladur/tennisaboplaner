@@ -15,7 +15,7 @@ def players():
         Player("Laura", [], 1),
         Player("Clara", [], 1),
         Player("Patrick", [], 1),
-        Player("Alex", ["2024-02-01"], 1),
+        Player("Alex", ["2024-01-01", "2024-02-01"], 1),
     ]
 
 @pytest.fixture()
@@ -101,3 +101,34 @@ def test_swap_players_works(example_round, players):
 def test_swap_players_doesnt_change_if_not_both_present(example_round, players):
     result = example_round.swap_players(players[0], players[4])
     assert not result
+
+def test_to_dict(example_round):
+    result = example_round.to_dict()
+    expected = {'day': '2024-02-01', 'matches': [("Max", "Moritz"), ("Clara", "Laura")]}
+    assert result == expected
+
+def test_from_dict(example_round, players):
+    data = {'day': '2024-02-01', 'matches': [("Max", "Moritz"), ("Clara", "Laura")]}
+    result = Round.from_dict(data, 2, players)
+    assert result.matches == example_round.matches
+    assert result.is_partial == example_round.is_partial
+    assert result.day == example_round.day
+
+
+def test_create_full_round(players):
+    result = Round.create(players, date(2024,2,2), 2)
+    assert len(result.matches) == 2
+    assert not result.is_partial
+    assert result.day == date(2024,2,2)
+
+def test_create_partial_round_partial_match(players):
+    result = Round.create(players, date(2024,1,1), 2)
+    assert len(result.matches) == 2
+    assert result.is_partial
+    assert result.day == date(2024,1,1)
+
+def test_create_partial_round_missing_match(players):
+    result = Round.create(players, date(2024,1,8), 3)
+    assert len(result.matches) == 2
+    assert result.is_partial
+    assert result.day == date(2024,1,8)

@@ -3,6 +3,7 @@
 import itertools
 from datetime import date
 from typing import Generator
+from random import shuffle
 
 from line_profiler import profile
 
@@ -15,7 +16,7 @@ class Round:
         if any(day in p.cannot_play for m in matches for p in m.get_players()):
             raise ValueError("not all players can play on this date")
         self.matches = matches
-        self.is_partial = len(matches) < number_of_courts
+        self.is_partial = len([p for p in self.get_players()]) != 2 * number_of_courts
         self.day = day
 
     def get_players(self) -> Generator[Player, None, None]:
@@ -57,6 +58,7 @@ class Round:
     def create(cls, players: list[Player], day: date, number_of_courts: int) -> "Round":
         matches: list[Match] = []
         possible_players = [p for p in players if day not in p.cannot_play]
+        shuffle(possible_players)
         for p, q in itertools.combinations(possible_players, 2):
             m = Match(p, q)
             if can_match_be_added(matches, m):
@@ -64,8 +66,10 @@ class Round:
                 if len(matches) == number_of_courts:
                     return cls(matches, day, number_of_courts)
         # partial round ...
-        missing_player = [p for p in players if not any(p in m.get_players() for m in matches)]
+        missing_player = [p for p in possible_players if not any(p in m.get_players() for m in matches)]
         if len(missing_player) == 1:
             matches.append(Match(missing_player[0], None))
+            return cls(matches, day, number_of_courts)
+        elif len(missing_player) == 0:
             return cls(matches, day, number_of_courts)
         raise Exception("something went wrong ...")
